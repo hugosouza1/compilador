@@ -2,30 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <fstream>
-
-class leitorArquivo {
-    private:
-        int linha;
-        int coluna;
-        int colunaPivo;
-        std::ifstream arquivo;
-
-    public:
-        // construtor
-        leitorArquivo(const std::string& nomeArquivo);
-
-        // leitura
-        bool lerChar(char &c);
-
-        // getters
-        int getLinha() const;
-        int getColuna() const;
-        int getColunaPivo() const;
-
-        // setter
-        void setColunaPivo(int num);
-};
+#include "leitorArquivo.h"
 
 enum class classeToken {
     LITERAIS,
@@ -44,9 +21,9 @@ struct tabelaToken {
     int coluna;
 };
 
-// funções do analisador léxico
+// funções
 void salvarToken(classeToken token, const std::string &nome,
-                 const leitorArquivo &arquivo,
+                 leitorArquivo &arquivo,
                  std::vector<tabelaToken> &tabela);
 
 int litarais(char pivo, leitorArquivo &arquivo,

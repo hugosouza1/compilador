@@ -1,49 +1,33 @@
-#include <iostream>
-#include <fstream>
-#include <regex>
-#include <string>
-#include <vector>
-
 #include "tokenHandler.h"
 
-using namespace std;
+void salvarToken(classeToken token, const std::string &nome,
+                 leitorArquivo &arquivo,
+                 std::vector<tabelaToken> &tabela) {
 
-void salvarToken(classeToken token, string nome, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
-    tabelaToken t;
-    t.classe = token;
-    t.nome = nome;
-    t.linha = arquivo.getLinha();
-    t.coluna = arquivo.getColunaPivo();
-    tabela.emplace_back(t);
+    tabela.emplace_back(tabelaToken{
+        token,
+        nome,
+        arquivo.getLinha(),
+        arquivo.getColunaPivo()
+    });
 }
 
-class leitorArquivo {
-    private:
-        int linha;
-        int coluna;
-        int linhaPivo;
-        int colunaPivo;
-        ifstream arquivo;
+int litarais(char pivo, leitorArquivo &arquivo,
+             std::vector<tabelaToken> &tabela) {
 
-    public:
-        leitorArquivo() : linha(0), coluna(0), arquivo("txt.txt") {}
+    if (pivo == '"') {
+        arquivo.setColunaPivo(arquivo.getColuna());
 
-        bool lerChar(char &c) {
-            if (arquivo.get(c)) {
-                if (c == '\n') {
-                    coluna = 0;
-                    linha++;
-                } else {
-                    coluna++;
-                }
-                return true;
+        std::string token = "";
+        char batedor;
+
+        while (arquivo.lerChar(batedor)) {
+            if (batedor == '"') {
+                salvarToken(classeToken::LITERAIS, token, arquivo, tabela);
+                return 1;
             }
-            return false;
+            token += batedor;
         }
-
-        int getLinha() const { return linha; }
-        int getColuna() const { return coluna; }
-        int getColunaPivo() const { return colunaPivo; }
-
-        void setColunaPivo(int num){colunaPivo = num;}
-};
+    }
+    return 0;
+}
