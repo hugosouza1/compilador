@@ -4,23 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "tokenHandler.h"
 
-enum class classeToken{
-    LITERAIS,
-    IDENTIFICADORES,
-    COMENTARIOS,
-    PALAVRA_RESERVADA,
-    NUMERAIS,
-    OPERADOR_LOGICO_MATEMATICO,
-    SEPARADOR
-};
-
-struct tabelaToken{
-    classeToken classe;
-    string nome;
-    int linha;
-    int coluna;
-};
+using namespace std;
 
 void salvarToken(classeToken token, string nome, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
     tabelaToken t;
@@ -30,3 +16,34 @@ void salvarToken(classeToken token, string nome, leitorArquivo &arquivo, vector<
     t.coluna = arquivo.getColunaPivo();
     tabela.emplace_back(t);
 }
+
+class leitorArquivo {
+    private:
+        int linha;
+        int coluna;
+        int linhaPivo;
+        int colunaPivo;
+        ifstream arquivo;
+
+    public:
+        leitorArquivo() : linha(0), coluna(0), arquivo("txt.txt") {}
+
+        bool lerChar(char &c) {
+            if (arquivo.get(c)) {
+                if (c == '\n') {
+                    coluna = 0;
+                    linha++;
+                } else {
+                    coluna++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        int getLinha() const { return linha; }
+        int getColuna() const { return coluna; }
+        int getColunaPivo() const { return colunaPivo; }
+
+        void setColunaPivo(int num){colunaPivo = num;}
+};
