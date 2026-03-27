@@ -1,9 +1,8 @@
 #include "tokenHandler.h"
 
-void salvarToken(classeToken token, const std::string &nome,
-                 leitorArquivo &arquivo,
-                 std::vector<tabelaToken> &tabela) {
+using namespace std;
 
+void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
     tabela.emplace_back(tabelaToken{
         token,
         nome,
@@ -12,13 +11,25 @@ void salvarToken(classeToken token, const std::string &nome,
     });
 }
 
-int litarais(char pivo, leitorArquivo &arquivo,
-             std::vector<tabelaToken> &tabela) {
+string toSString(classeToken c) {
+    switch (c) {
+        case classeToken::LITERAIS: return "LITERAIS";
+        case classeToken::IDENTIFICADORES: return "IDENTIFICADORES";
+        case classeToken::COMENTARIOS: return "COMENTARIOS";
+        case classeToken::PALAVRA_RESERVADA: return "PALAVRA_RESERVADA";
+        case classeToken::NUMERAIS: return "NUMERAIS";
+        case classeToken::OPERADOR_LOGICO_MATEMATICO: return "OPERADOR";
+        case classeToken::SEPARADOR: return "SEPARADOR";
+        default: return "nada";
+    }
+}
+
+int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
 
     if (pivo == '"') {
         arquivo.setColunaPivo(arquivo.getColuna());
 
-        std::string token = "";
+        string token = "";
         char batedor;
 
         while (arquivo.lerChar(batedor)) {
@@ -29,5 +40,132 @@ int litarais(char pivo, leitorArquivo &arquivo,
             token += batedor;
         }
     }
+    
     return 0;
+}
+
+
+
+int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabela*/) {
+    
+    // cout << pivo << "\n";
+    if (pivo == '/') {
+        arquivo.setColunaPivo(arquivo.getColuna());
+
+        char batedor;
+
+        if (!arquivo.peekChar(batedor)) return 0;
+
+        // comentário de linha 
+        if (batedor == '/') {
+            arquivo.lerChar(batedor); 
+
+            string token = "";
+
+            while (arquivo.lerChar(batedor)) {
+                if (batedor == '\n') {
+                    // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
+                    return 1;
+                }
+                token += batedor;
+            }
+        }
+
+        // comentário de bloco 
+        else if (batedor == '*') {
+            arquivo.lerChar(batedor); 
+
+            string token = "";
+
+            while (arquivo.lerChar(batedor)) {
+
+                if (batedor == '*') {
+                    char prox;
+                    if (!arquivo.peekChar(prox)) return 0;
+
+                    if (prox == '/') {
+                        arquivo.lerChar(prox); 
+                        // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
+                        return 1;
+                    }
+                }
+
+                token += batedor;
+            }
+        }
+    }
+    return 0;
+}
+
+
+int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
+    if(pivo == '+' || pivo == '-' || pivo == '*' || pivo == '/' || pivo == '|' || 
+       pivo == '&' || pivo == '=' || pivo == '!' || pivo == '<' || pivo == '>'){
+        char batedor;
+        if(!arquivo.peekChar(batedor)) return 0;
+
+        if((batedor == pivo) || (batedor == '=' && (pivo == '<' || pivo == '>'))){
+            string token = "";
+            token += static_cast<char>(pivo);
+            token += static_cast<char>(batedor);
+
+            arquivo.lerChar(batedor);
+            salvarToken(classeToken::OPERADOR_LOGICO_MATEMATICO, token, arquivo, tabela);
+            return 1;
+        } else {
+            string token = "";
+            token += static_cast<char>(pivo);
+            salvarToken(classeToken::OPERADOR_LOGICO_MATEMATICO, token, arquivo, tabela);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
+
+    if (!isdigit(pivo))
+        return 0;
+
+    arquivo.setColunaPivo(arquivo.getColuna());
+
+    string token;
+    token += pivo;
+
+    char c;
+    bool temPonto = false;
+    bool temDigitoAposPonto = false;
+
+    while(arquivo.peekChar(c)){
+
+        if(isdigit(c)){
+            arquivo.lerChar(c);
+            token += c;
+
+            if(temPonto)
+                temDigitoAposPonto = true;
+        }
+
+        else if (c == '.' && !temPonto) {
+            arquivo.lerChar(c);
+            token += c;
+            temPonto = true;
+        }
+
+        else if (c == 'f') {
+            if (!temPonto || temDigitoAposPonto) {
+                arquivo.lerChar(c);
+                token += c;
+            }
+            break;
+        }
+
+        else {
+            break;
+        }
+    }
+
+    salvarToken(classeToken::NUMERAIS, token, arquivo, tabela);
+    return 1;
 }

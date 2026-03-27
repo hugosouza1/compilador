@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <string>
+#include <string>
+#include "tokenHandler.h"
 
 class leitorArquivo {
 private:
@@ -20,4 +22,5 @@ public:
     int getColunaPivo() const;
 
     void setColunaPivo(int num);
+    bool peekChar(char &c);
 };
