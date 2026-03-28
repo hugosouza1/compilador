@@ -1,9 +1,5 @@
-"pkffjpwvnnp"
-"ooajsdvnowjjnwo"
-pawkgkpwrkkjrwp
+int x = 10.0f;
 
+"que badalo"
 
-""""""""
-++ + -- - / * < > <= >= 
-
-10231 1922 12.33f 12.2
+float badalado = 10.0

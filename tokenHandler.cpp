@@ -123,7 +123,7 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
 }
 
 
-int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
+int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
 
     if (!isdigit(pivo))
         return 0;
@@ -167,5 +167,68 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
     }
 
     salvarToken(classeToken::NUMERAIS, token, arquivo, tabela);
+    return 1;
+}
+
+
+int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
+
+    if (isspace(pivo)) {
+        return 1; // igonra espaço vazio
+    }
+
+    if (pivo == '{' || pivo == '}' ||
+        pivo == '(' || pivo == ')' ||
+        pivo == '[' || pivo == ']' ||
+        pivo == ';' || pivo == ',' ||
+        pivo == ':') {
+
+        arquivo.setColunaPivo(arquivo.getColuna());
+
+        string token(1, pivo);
+
+        salvarToken(classeToken::SEPARADOR, token, arquivo, tabela);
+        return 1;
+    }
+    return 0;
+}
+
+
+bool ehPalavraReservada(const string& token) {
+    static const unordered_set<string> reservadas = {
+        "if", "for", "int", "bool", "string", "float"
+    };
+
+    return reservadas.count(token) > 0; 
+}
+
+
+int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
+
+    if (!(isalpha(pivo) || pivo == '_')) // a-z e _
+        return 0;
+
+    arquivo.setColunaPivo(arquivo.getColuna());
+
+    string token = "";
+    token += pivo;
+
+    char batedor;
+
+    while (arquivo.peekChar(batedor)) {
+        if (isalnum(batedor) || batedor == '_') { // a-z ou 0-9
+            arquivo.lerChar(batedor);
+            token += batedor;
+        } else {
+            break;
+        }
+    }
+
+    if (ehPalavraReservada(token)) {
+        salvarToken(classeToken::PALAVRA_RESERVADA, token, arquivo, tabela);
+    } else {
+        salvarToken(classeToken::IDENTIFICADORES, token, arquivo, tabela);
+    }
+
     return 1;
 }
