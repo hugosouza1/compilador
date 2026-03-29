@@ -38,4 +38,6 @@ int numerais(char pivo, leitorArquivo &arquivo, std::vector<tabelaToken> &tabela
 int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
 int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
 
+void tokenError(string tipo, leitorArquivo &arquivo, string tipoErro);
+
 string toSString(classeToken c);

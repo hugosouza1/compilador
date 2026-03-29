@@ -13,15 +13,25 @@ void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, 
 
 string toSString(classeToken c) {
     switch (c) {
-        case classeToken::LITERAIS: return "LITERAIS";
-        case classeToken::IDENTIFICADORES: return "IDENTIFICADORES";
-        case classeToken::COMENTARIOS: return "COMENTARIOS";
+        case classeToken::LITERAIS: return "LITERAL";
+        case classeToken::IDENTIFICADORES: return "IDENTIFICADOR";
+        case classeToken::COMENTARIOS: return "COMENTARIO";
         case classeToken::PALAVRA_RESERVADA: return "PALAVRA_RESERVADA";
-        case classeToken::NUMERAIS: return "NUMERAIS";
+        case classeToken::NUMERAIS: return "NUMERAL";
         case classeToken::OPERADOR_LOGICO_MATEMATICO: return "OPERADOR";
         case classeToken::SEPARADOR: return "SEPARADOR";
-        default: return "nada";
+        default: return "so pra tirar o warning";
     }
+}
+
+void tokenError(string tipo, leitorArquivo &arquivo, string tokenErrado){
+    cout <<
+        "-------------ERRO--------------"     << "\n" <<
+        "TIPO: "  << tipo       << "\n" <<
+            "LINHA: "  << arquivo.getLinha()      << "\n" <<
+        "COLUNA: " << arquivo.getColunaPivo() << "\n" <<
+        "TOKEN ERRADO:{\n" << (tokenErrado) << "\n}\n" <<
+        "-------------------------------\n\n";
 }
 
 int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
@@ -29,18 +39,20 @@ int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
     if (pivo == '"') {
         arquivo.setColunaPivo(arquivo.getColuna());
 
-        string token = "";
+        string token = "\"";
         char batedor;
 
         while (arquivo.lerChar(batedor)) {
             if (batedor == '"') {
+                token += "\"";
                 salvarToken(classeToken::LITERAIS, token, arquivo, tabela);
                 return 1;
             }
             token += batedor;
         }
+        tokenError("LITERAL MAL FORMATADO!", arquivo, token);  
+        return 1; // consumir o antes do EOF  
     }
-    
     return 0;
 }
 
@@ -54,44 +66,51 @@ int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabel
 
         char batedor;
 
-        if (!arquivo.peekChar(batedor)) return 0;
+        if (!arquivo.peekChar(batedor)) return 0; // EOF ou \n como final do "//"
 
         // comentário de linha 
         if (batedor == '/') {
             arquivo.lerChar(batedor); 
 
-            string token = "";
+            string token = "/";
 
             while (arquivo.lerChar(batedor)) {
+                token += batedor;
                 if (batedor == '\n') {
                     // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
                     return 1;
                 }
                 token += batedor;
             }
+            return 1; // fazer com que consuma o EOF caso bata no fim
         }
-
+        
         // comentário de bloco 
         else if (batedor == '*') {
+            // cout << "ola" << "\n";
             arquivo.lerChar(batedor); 
-
-            string token = "";
-
+            
+            string token = "/";
+            
             while (arquivo.lerChar(batedor)) {
-
+                token += batedor;
+                
                 if (batedor == '*') {
                     char prox;
-                    if (!arquivo.peekChar(prox)) return 0;
-
+                    if (!arquivo.peekChar(prox)) break; // EOF
+                    
+                    // cout << "ola" << "\n";
                     if (prox == '/') {
                         arquivo.lerChar(prox); 
                         // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
                         return 1;
                     }
                 }
-
+                
                 token += batedor;
             }
+            tokenError("COMENTARIO MAL FORMATADO!", arquivo, token);
+            return 1;
         }
     }
     return 0;
@@ -102,7 +121,7 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
     if(pivo == '+' || pivo == '-' || pivo == '*' || pivo == '/' || pivo == '|' || 
        pivo == '&' || pivo == '=' || pivo == '!' || pivo == '<' || pivo == '>'){
         char batedor;
-        if(!arquivo.peekChar(batedor)) return 0;
+        arquivo.peekChar(batedor);
 
         if((batedor == pivo) || (batedor == '=' && (pivo == '<' || pivo == '>'))){
             string token = "";
@@ -136,6 +155,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
     char c;
     bool temPonto = false;
     bool temDigitoAposPonto = false;
+    bool doisPonto = false;
 
     while(arquivo.peekChar(c)){
 
@@ -145,6 +165,13 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
 
             if(temPonto)
                 temDigitoAposPonto = true;
+        }
+        
+        // gambiarra pra cair no erro
+        else if(c == '.' && temPonto){
+            arquivo.lerChar(c);
+            doisPonto = true;
+            token += c;
         }
 
         else if (c == '.' && !temPonto) {
@@ -166,16 +193,17 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
         }
     }
 
+    if((temPonto && !temDigitoAposPonto) || doisPonto){
+        tokenError("NUMERAL MAL FORMATADO", arquivo, token);
+        return 1; // consumir resto9
+    }
+
     salvarToken(classeToken::NUMERAIS, token, arquivo, tabela);
     return 1;
 }
 
 
 int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
-
-    if (isspace(pivo)) {
-        return 1; // igonra espaço vazio
-    }
 
     if (pivo == '{' || pivo == '}' ||
         pivo == '(' || pivo == ')' ||
