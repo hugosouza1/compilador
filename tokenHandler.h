@@ -14,13 +14,13 @@ using namespace std;
 class leitorArquivo;
 
 enum class classeToken {
-    LITERAIS, //feito
+    LITERAIS, 
     IDENTIFICADORES,
-    COMENTARIOS, // feito
+    COMENTARIOS, 
     PALAVRA_RESERVADA,
-    NUMERAIS, // feito
-    OPERADOR_LOGICO_MATEMATICO, // feito
-    SEPARADOR // feito
+    NUMERAIS, 
+    OPERADOR_LOGICO_MATEMATICO, 
+    SEPARADOR 
 };
 
 struct tabelaToken {
@@ -30,14 +30,21 @@ struct tabelaToken {
     int coluna;
 };
 
-void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
-int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
-int comentarios(char pivo, leitorArquivo &arquivo/*, std::vector<tabelaToken> &tabela*/);
-int operadoMatLog(char pivo, leitorArquivo &arquivo, std::vector<tabelaToken> &tabela);
-int numerais(char pivo, leitorArquivo &arquivo, std::vector<tabelaToken> &tabela);
-int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
-int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
+struct tabelaERRO {
+    string tokenErro;
+    string tipoErro;
+    int linha;
+    int coluna;
+};
 
-void tokenError(string tipo, leitorArquivo &arquivo, string tipoErro);
+void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
+int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos);
+int comentarios(char pivo, leitorArquivo &arquivo/*, std::vector<tabelaToken> &tabela*/, vector<tabelaERRO> &tabelaInvalidos);
+int operadoMatLog(char pivo, leitorArquivo &arquivo, std::vector<tabelaToken> &tabela);
+int numerais(char pivo, leitorArquivo &arquivo, std::vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos);
+int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela);
+int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos);
+
+int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInvalidos);
 
 string toSString(classeToken c);

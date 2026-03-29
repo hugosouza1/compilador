@@ -8,10 +8,11 @@ BUILD_DIR = build
 SRC = analisador_lexico.cpp leitorArquivo.cpp tokenHandler.cpp
 OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)
 EXEC = compilador
+ENTRADA = txt.txt
 
 # regra principal
 all: $(EXEC)
-	./$(EXEC)
+	./$(EXEC) $(ENTRADA)
 
 # linkagem
 $(EXEC): $(OBJ)

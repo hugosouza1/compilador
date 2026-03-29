@@ -12,7 +12,7 @@ bool leitorArquivo::lerChar(char &c) {
         }
         return true;
     }
-    return false;
+    return false; // EOF
 }
 
 int leitorArquivo::getLinha() const { return linha; }
@@ -26,6 +26,6 @@ void leitorArquivo::setColunaPivo(int num) {
 bool leitorArquivo::peekChar(char &c) {
     int val = arquivo.peek();
     if (val == EOF) return false;
-    c = static_cast<char>(val);
+    c = val;
     return true;
 }

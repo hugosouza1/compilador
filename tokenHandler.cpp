@@ -11,8 +11,8 @@ void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, 
     });
 }
 
-string toSString(classeToken c) {
-    switch (c) {
+string toSString(classeToken c){
+    switch (c){
         case classeToken::LITERAIS: return "LITERAL";
         case classeToken::IDENTIFICADORES: return "IDENTIFICADOR";
         case classeToken::COMENTARIOS: return "COMENTARIO";
@@ -24,83 +24,116 @@ string toSString(classeToken c) {
     }
 }
 
-void tokenError(string tipo, leitorArquivo &arquivo, string tokenErrado){
-    cout <<
-        "-------------ERRO--------------"     << "\n" <<
-        "TIPO: "  << tipo       << "\n" <<
-            "LINHA: "  << arquivo.getLinha()      << "\n" <<
-        "COLUNA: " << arquivo.getColunaPivo() << "\n" <<
-        "TOKEN ERRADO:{\n" << (tokenErrado) << "\n}\n" <<
-        "-------------------------------\n\n";
+int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInvalidos){
+
+    arquivo.setColunaPivo(arquivo.getColuna());
+
+    string token;
+    token += pivo;
+
+    char c;
+
+    while (arquivo.peekChar(c)){
+
+        // se ler letra, numero, espaços e separador, sai
+        if (isspace(c) || 
+            isalnum(c) || c == '_' ||
+            c == '"' ||
+            c == '/' ||
+            c == '+' || c == '-' || c == '*' || c == '=' ||
+            c == '<' || c == '>' || c == '!' ||
+            c == '&' || c == '|' ||
+            c == '{' || c == '}' || c == '(' || c == ')' ||
+            c == ';' || c == ',' || c == ':'){
+            break;
+        }
+
+        arquivo.lerChar(c);
+        token += c;
+    }
+
+    tabelaInvalidos.emplace_back(tabelaERRO{
+        token,
+        "CARACTER INVALIDO!",
+        arquivo.getLinha(),
+        arquivo.getColunaPivo()
+    });
+
+    return 1;
 }
 
-int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
 
-    if (pivo == '"') {
+void erroFormado(const string& tipo, leitorArquivo &arquivo, const string& token, vector<tabelaERRO> &tabelaInvalidos){
+    tabelaInvalidos.emplace_back(tabelaERRO{
+        token,
+        tipo,
+        arquivo.getLinha(),
+        arquivo.getColunaPivo()
+    });
+}
+
+int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos){
+
+    if (pivo == '"'){
         arquivo.setColunaPivo(arquivo.getColuna());
 
         string token = "\"";
         char batedor;
 
-        while (arquivo.lerChar(batedor)) {
-            if (batedor == '"') {
+        while (arquivo.lerChar(batedor)){
+            if (batedor == '"'){
                 token += "\"";
                 salvarToken(classeToken::LITERAIS, token, arquivo, tabela);
                 return 1;
             }
             token += batedor;
         }
-        tokenError("LITERAL MAL FORMATADO!", arquivo, token);  
-        return 1; // consumir o antes do EOF  
+        erroFormado("LITERAL MAL FORMATADO!", arquivo, token, tabelaInvalidos);
+        return 1; // evitar que o caracter antes do EOF caia em outra classe
     }
     return 0;
 }
 
 
 
-int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabela*/) {
+int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabela*/, vector<tabelaERRO> &tabelaInvalidos){
     
     // cout << pivo << "\n";
-    if (pivo == '/') {
+    if (pivo == '/'){
         arquivo.setColunaPivo(arquivo.getColuna());
 
         char batedor;
 
         if (!arquivo.peekChar(batedor)) return 0; // EOF ou \n como final do "//"
 
-        // comentário de linha 
-        if (batedor == '/') {
+        if (batedor == '/'){
             arquivo.lerChar(batedor); 
 
             string token = "/";
 
-            while (arquivo.lerChar(batedor)) {
+            while (arquivo.lerChar(batedor)){
                 token += batedor;
-                if (batedor == '\n') {
+                if (batedor == '\n'){
                     // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
                     return 1;
                 }
-                token += batedor;
             }
             return 1; // fazer com que consuma o EOF caso bata no fim
         }
         
-        // comentário de bloco 
-        else if (batedor == '*') {
-            // cout << "ola" << "\n";
+        else if (batedor == '*'){
             arquivo.lerChar(batedor); 
             
             string token = "/";
             
-            while (arquivo.lerChar(batedor)) {
+            while (arquivo.lerChar(batedor)){
                 token += batedor;
                 
-                if (batedor == '*') {
+                if (batedor == '*'){
                     char prox;
                     if (!arquivo.peekChar(prox)) break; // EOF
                     
-                    // cout << "ola" << "\n";
-                    if (prox == '/') {
+                    if (prox == '/'){
                         arquivo.lerChar(prox); 
                         // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
                         return 1;
@@ -109,8 +142,8 @@ int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabel
                 
                 token += batedor;
             }
-            tokenError("COMENTARIO MAL FORMATADO!", arquivo, token);
-            return 1;
+            erroFormado("COMENTARIO MAL FORMATADO!", arquivo, token, tabelaInvalidos);
+return 1;
         }
     }
     return 0;
@@ -121,19 +154,20 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
     if(pivo == '+' || pivo == '-' || pivo == '*' || pivo == '/' || pivo == '|' || 
        pivo == '&' || pivo == '=' || pivo == '!' || pivo == '<' || pivo == '>'){
         char batedor;
+        arquivo.setColunaPivo(arquivo.getColuna());
         arquivo.peekChar(batedor);
 
         if((batedor == pivo) || (batedor == '=' && (pivo == '<' || pivo == '>'))){
             string token = "";
-            token += static_cast<char>(pivo);
-            token += static_cast<char>(batedor);
+            token += pivo;
+            token += batedor;
 
             arquivo.lerChar(batedor);
             salvarToken(classeToken::OPERADOR_LOGICO_MATEMATICO, token, arquivo, tabela);
             return 1;
         } else {
             string token = "";
-            token += static_cast<char>(pivo);
+            token += pivo;
             salvarToken(classeToken::OPERADOR_LOGICO_MATEMATICO, token, arquivo, tabela);
             return 1;
         }
@@ -142,48 +176,45 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
 }
 
 
-int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
+int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos){
 
-    if (!isdigit(pivo))
-        return 0;
+    if (!isdigit(pivo)) return 0;
 
     arquivo.setColunaPivo(arquivo.getColuna());
 
     string token;
     token += pivo;
 
-    char c;
+    char batedor;
     bool temPonto = false;
     bool temDigitoAposPonto = false;
     bool doisPonto = false;
 
-    while(arquivo.peekChar(c)){
+    while(arquivo.peekChar(batedor)){
 
-        if(isdigit(c)){
-            arquivo.lerChar(c);
-            token += c;
+        if(isdigit(batedor)){
+            arquivo.lerChar(batedor);
+            token += batedor;
 
-            if(temPonto)
-                temDigitoAposPonto = true;
+            if(temPonto) temDigitoAposPonto = true; // pelo menos um numero apos o ponto
         }
         
-        // gambiarra pra cair no erro
-        else if(c == '.' && temPonto){
-            arquivo.lerChar(c);
+        else if(batedor == '.' && temPonto){ // erro: dois ou mais ponts
+            arquivo.lerChar(batedor);
             doisPonto = true;
-            token += c;
+            token += batedor;
         }
 
-        else if (c == '.' && !temPonto) {
-            arquivo.lerChar(c);
-            token += c;
+        else if (batedor == '.' && !temPonto){ // um ponto
+            arquivo.lerChar(batedor);
+            token += batedor;
             temPonto = true;
         }
 
-        else if (c == 'f') {
-            if (!temPonto || temDigitoAposPonto) {
-                arquivo.lerChar(c);
-                token += c;
+        else if (batedor == 'f'){ //f
+            if (!temPonto || temDigitoAposPonto){
+                arquivo.lerChar(batedor);
+                token += batedor;
             }
             break;
         }
@@ -193,9 +224,9 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
         }
     }
 
-    if((temPonto && !temDigitoAposPonto) || doisPonto){
-        tokenError("NUMERAL MAL FORMATADO", arquivo, token);
-        return 1; // consumir resto9
+    if((temPonto && !temDigitoAposPonto) || doisPonto){ // 12. ou 1.2.2.2
+        erroFormado("NUMERAL MAL FORMATADO!", arquivo, token, tabelaInvalidos);
+        return 1;
     }
 
     salvarToken(classeToken::NUMERAIS, token, arquivo, tabela);
@@ -209,7 +240,7 @@ int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
         pivo == '(' || pivo == ')' ||
         pivo == '[' || pivo == ']' ||
         pivo == ';' || pivo == ',' ||
-        pivo == ':') {
+        pivo == ':'){
 
         arquivo.setColunaPivo(arquivo.getColuna());
 
@@ -222,7 +253,7 @@ int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
 }
 
 
-bool ehPalavraReservada(const string& token) {
+bool ehPalavraReservada(const string& token){
     static const unordered_set<string> reservadas = {
         "if", "for", "int", "bool", "string", "float"
     };
@@ -231,30 +262,58 @@ bool ehPalavraReservada(const string& token) {
 }
 
 
-int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
+int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos){
 
-    if (!(isalpha(pivo) || pivo == '_')) // a-z e _
+    if (!(isalpha(pivo) || pivo == '_')) // a-z ou _
         return 0;
 
     arquivo.setColunaPivo(arquivo.getColuna());
 
-    string token = "";
+    string token;
     token += pivo;
 
     char batedor;
+    bool invalido = false;
 
-    while (arquivo.peekChar(batedor)) {
-        if (isalnum(batedor) || batedor == '_') { // a-z ou 0-9
+    while (arquivo.peekChar(batedor)){
+
+        // válido
+        if (isalnum(batedor) || batedor == '_'){ // a-z,  0-9 ou  _
             arquivo.lerChar(batedor);
             token += batedor;
-        } else {
+        }
+
+        // caractere inavlidos
+        else if (!isspace(batedor) &&
+                 batedor != '"' && batedor != '/' &&
+                 batedor != '+' && batedor != '-' && batedor != '*' &&
+                 batedor != '=' && batedor != '<' && batedor != '>' &&
+                 batedor != '!' && batedor != '&' && batedor != '|' &&
+                 batedor != '{' && batedor != '}' && batedor != '(' && batedor != ')'
+        ){
+            arquivo.lerChar(batedor);
+            token += batedor;
+            invalido = true;
+        }
+        
+        // caracter valido do if de cima
+        else {
             break;
         }
     }
 
-    if (ehPalavraReservada(token)) {
+    if (invalido){
+        tabelaInvalidos.emplace_back(tabelaERRO{
+            token,
+            "IDENTIFICADOR MAL FORMATADO",
+            arquivo.getLinha(),
+            arquivo.getColunaPivo()
+        });
+    }
+    else if (ehPalavraReservada(token)){
         salvarToken(classeToken::PALAVRA_RESERVADA, token, arquivo, tabela);
-    } else {
+    }
+    else {
         salvarToken(classeToken::IDENTIFICADORES, token, arquivo, tabela);
     }
 
