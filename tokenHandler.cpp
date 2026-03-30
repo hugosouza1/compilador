@@ -6,7 +6,7 @@ void salvarToken(classeToken token, const string &nome, leitorArquivo &arquivo, 
     tabela.emplace_back(tabelaToken{
         token,
         nome,
-        arquivo.getLinha(),
+        arquivo.getLinhaPivo(),
         arquivo.getColunaPivo()
     });
 }
@@ -30,7 +30,7 @@ void erroFormado(const string& tipo, leitorArquivo &arquivo, const string& token
     tabelaInvalidos.emplace_back(tabelaERRO{
         token,
         tipo,
-        arquivo.getLinha(),
+        arquivo.getLinhaPivo(),
         arquivo.getColunaPivo()
     });
 }
@@ -40,6 +40,8 @@ void erroFormado(const string& tipo, leitorArquivo &arquivo, const string& token
 int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInvalidos){
 
     arquivo.setColunaPivo(arquivo.getColuna());
+    arquivo.setLinhaPivo(arquivo.getLinha());
+
 
     string token;
     token += pivo;
@@ -73,6 +75,7 @@ int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
 
     if (pivo == '"'){
         arquivo.setColunaPivo(arquivo.getColuna());
+        arquivo.setLinhaPivo(arquivo.getLinha());
 
         string token = "\"";
         char batedor;
@@ -97,6 +100,7 @@ int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabel
     
     if (pivo == '/'){
         arquivo.setColunaPivo(arquivo.getColuna());
+        arquivo.setLinhaPivo(arquivo.getLinha());
 
         char batedor;
 
@@ -151,6 +155,8 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
        pivo == '&' || pivo == '=' || pivo == '!' || pivo == '<' || pivo == '>'){
         char batedor;
         arquivo.setColunaPivo(arquivo.getColuna());
+        arquivo.setLinhaPivo(arquivo.getLinha());
+
         arquivo.peekChar(batedor);
 
         if((batedor == pivo) || (batedor == '=' && (pivo == '<' || pivo == '>'))){
@@ -177,6 +183,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
     if (!isdigit(pivo)) return 0;
 
     arquivo.setColunaPivo(arquivo.getColuna());
+    arquivo.setLinhaPivo(arquivo.getLinha());
 
     string token;
     token += pivo;
@@ -227,7 +234,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
         }
     }
 
-    if((temPonto && !temDigitoAposPonto) || doisPonto || invalido){ // 12. ou 1.2.2.2
+    if((temPonto && !temDigitoAposPonto) || doisPonto || invalido){ // 12. ou 1.2.2.2 ou 12a2
         erroFormado("NUMERAL MAL FORMATADO!", arquivo, token, tabelaInvalidos);
         return 1;
     }
@@ -245,6 +252,7 @@ int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
         pivo == ';' || pivo == ',' || pivo == ':'){
 
         arquivo.setColunaPivo(arquivo.getColuna());
+        arquivo.setLinhaPivo(arquivo.getLinha());
 
         string token(1, pivo);
 
@@ -270,6 +278,7 @@ int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
         return 0;
 
     arquivo.setColunaPivo(arquivo.getColuna());
+    arquivo.setLinhaPivo(arquivo.getLinha());
 
     string token;
     token += pivo;

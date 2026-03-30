@@ -25,5 +25,7 @@ bool leitorArquivo::peekChar(char &c) {
 int leitorArquivo::getLinha() const { return linha; }
 int leitorArquivo::getColuna() const { return coluna; }
 int leitorArquivo::getColunaPivo() const { return colunaPivo; }
+int leitorArquivo::getLinhaPivo() const { return linhaPivo; }
 
 void leitorArquivo::setColunaPivo(int num) { colunaPivo = num; }
+void leitorArquivo::setLinhaPivo(int num) { linhaPivo = num; }
