@@ -1,7 +1,25 @@
-int x = 10;
- abra<acak>
- //kkhvkhvm
+int x = 0;
 
- çkknlj
+for(int i = 0; i < 10; i++){
+    x++;
+}
 
- mmkj
+float v@ri@vel = 10;
+float oi = 10.;
+float ola = 1.1.1.1.111..11..1.1.1
+
+while(1){
+    && || <= == >= = - = * / , : ; {} () []
+}
+
+string opa[] = "hello world";
+
+//comentario linha
+
+@#$%ç^~
+
+/*comentario bloco
+fjcpdmce
+fjcpdmcefe
+comentarioefllc
+delc

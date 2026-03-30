@@ -18,7 +18,7 @@ void imprimirTokens(vector<tabelaToken> tabela){
          << setw(10) << "COLUNA"
          << endl;
 
-    cout << string(76, '-') << endl;
+    cout << string(76, '-') << "\n";
 
     int i = 1;
     for (const auto &t : tabela) {
@@ -32,19 +32,21 @@ void imprimirTokens(vector<tabelaToken> tabela){
         i++;
     }
     
-    cout << string(76, '-') << endl;
+    cout << string(76, '-') << "\n";
 
 }
 
 void imprimeErro(vector<tabelaERRO> tabelaInvalidos ){
-        for (const auto &t : tabelaInvalidos) {
-    cout <<
-        "-------------ERRO--------------"     << "\n" <<
-        "TIPO: "  << t.tipoErro   << "\n" <<
-            "LINHA: "  << t.linha      << "\n" <<
-        "COLUNA: " << t.coluna << "\n" <<
-        "TOKEN ERRADO:{\n" << t.tokenErro << "\n}\n" <<
-        "-------------------------------\n\n";
+    for (const auto &t : tabelaInvalidos) {
+        cout << string(23, '-') + "ERRO" + string(23, '-') << "\n";
+        
+        cout <<
+            "TIPO: "           << t.tipoErro  << "\n"    <<
+            "LINHA: "          << t.linha     << "\n"    <<
+            "COLUNA: "         << t.coluna    << "\n"    <<
+            "TOKEN ERRADO:{\n" << t.tokenErro << "\n}\n";
+            
+            cout << string(50, '-') << "\n\n";
     }
 }
 
@@ -78,6 +80,7 @@ int main(int argc, char *argv[]) {
     }
 
     imprimirTokens(tabela);
+    cout << "\n\n";
     imprimeErro(tabelaInvalidos);
 
     return 0;

@@ -24,6 +24,19 @@ string toSString(classeToken c){
     }
 }
 
+
+// tabelar erros identificados nas classes
+void erroFormado(const string& tipo, leitorArquivo &arquivo, const string& token, vector<tabelaERRO> &tabelaInvalidos){
+    tabelaInvalidos.emplace_back(tabelaERRO{
+        token,
+        tipo,
+        arquivo.getLinha(),
+        arquivo.getColunaPivo()
+    });
+}
+
+
+// aglomerar invalidos soltos
 int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInvalidos){
 
     arquivo.setColunaPivo(arquivo.getColuna());
@@ -52,24 +65,8 @@ int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInval
         token += c;
     }
 
-    tabelaInvalidos.emplace_back(tabelaERRO{
-        token,
-        "CARACTER INVALIDO!",
-        arquivo.getLinha(),
-        arquivo.getColunaPivo()
-    });
-
+    erroFormado("CARACTER INVALIDO!", arquivo, token, tabelaInvalidos);
     return 1;
-}
-
-
-void erroFormado(const string& tipo, leitorArquivo &arquivo, const string& token, vector<tabelaERRO> &tabelaInvalidos){
-    tabelaInvalidos.emplace_back(tabelaERRO{
-        token,
-        tipo,
-        arquivo.getLinha(),
-        arquivo.getColunaPivo()
-    });
 }
 
 int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos){
@@ -98,7 +95,6 @@ int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
 
 int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabela*/, vector<tabelaERRO> &tabelaInvalidos){
     
-    // cout << pivo << "\n";
     if (pivo == '/'){
         arquivo.setColunaPivo(arquivo.getColuna());
 
@@ -124,7 +120,7 @@ int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabel
         else if (batedor == '*'){
             arquivo.lerChar(batedor); 
             
-            string token = "/";
+            string token = "/*";
             
             while (arquivo.lerChar(batedor)){
                 token += batedor;
@@ -239,8 +235,7 @@ int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela){
     if (pivo == '{' || pivo == '}' ||
         pivo == '(' || pivo == ')' ||
         pivo == '[' || pivo == ']' ||
-        pivo == ';' || pivo == ',' ||
-        pivo == ':'){
+        pivo == ';' || pivo == ',' || pivo == ':'){
 
         arquivo.setColunaPivo(arquivo.getColuna());
 
@@ -289,6 +284,7 @@ int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
                  batedor != '+' && batedor != '-' && batedor != '*' &&
                  batedor != '=' && batedor != '<' && batedor != '>' &&
                  batedor != '!' && batedor != '&' && batedor != '|' &&
+                 batedor != '[' && batedor != ']' &&
                  batedor != '{' && batedor != '}' && batedor != '(' && batedor != ')'
         ){
             arquivo.lerChar(batedor);
@@ -303,12 +299,7 @@ int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
     }
 
     if (invalido){
-        tabelaInvalidos.emplace_back(tabelaERRO{
-            token,
-            "IDENTIFICADOR MAL FORMATADO",
-            arquivo.getLinha(),
-            arquivo.getColunaPivo()
-        });
+        erroFormado("IDENTIFICADOR MAL FORMATADO!", arquivo, token, tabelaInvalidos);
     }
     else if (ehPalavraReservada(token)){
         salvarToken(classeToken::PALAVRA_RESERVADA, token, arquivo, tabela);

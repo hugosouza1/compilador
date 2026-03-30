@@ -1,6 +1,6 @@
 #include "leitorArquivo.h"
 
-leitorArquivo::leitorArquivo(const std::string& nomeArquivo): linha(0), coluna(0), colunaPivo(0), arquivo(nomeArquivo) {}
+leitorArquivo::leitorArquivo(const std::string& nomeArquivo): linha(1), coluna(0), colunaPivo(0), arquivo(nomeArquivo) {}
 
 bool leitorArquivo::lerChar(char &c) {
     if (arquivo.get(c)) {
@@ -15,17 +15,15 @@ bool leitorArquivo::lerChar(char &c) {
     return false; // EOF
 }
 
-int leitorArquivo::getLinha() const { return linha; }
-int leitorArquivo::getColuna() const { return coluna; }
-int leitorArquivo::getColunaPivo() const { return colunaPivo; }
-
-void leitorArquivo::setColunaPivo(int num) {
-    colunaPivo = num;
-}
-
 bool leitorArquivo::peekChar(char &c) {
     int val = arquivo.peek();
     if (val == EOF) return false;
     c = val;
     return true;
 }
+
+int leitorArquivo::getLinha() const { return linha; }
+int leitorArquivo::getColuna() const { return coluna; }
+int leitorArquivo::getColunaPivo() const { return colunaPivo; }
+
+void leitorArquivo::setColunaPivo(int num) { colunaPivo = num; }
