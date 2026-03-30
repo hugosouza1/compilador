@@ -185,6 +185,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
     bool temPonto = false;
     bool temDigitoAposPonto = false;
     bool doisPonto = false;
+    bool invalido = false;
 
     while(arquivo.peekChar(batedor)){
 
@@ -213,6 +214,12 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
                 token += batedor;
             }
             break;
+        } 
+
+        else if (isalpha(batedor)){
+            arquivo.lerChar(batedor);
+            token += batedor;
+            invalido = true;
         }
 
         else {
@@ -220,7 +227,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
         }
     }
 
-    if((temPonto && !temDigitoAposPonto) || doisPonto){ // 12. ou 1.2.2.2
+    if((temPonto && !temDigitoAposPonto) || doisPonto || invalido){ // 12. ou 1.2.2.2
         erroFormado("NUMERAL MAL FORMATADO!", arquivo, token, tabelaInvalidos);
         return 1;
     }
