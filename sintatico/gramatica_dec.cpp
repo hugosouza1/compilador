@@ -1,24 +1,10 @@
 #include "gramatica.hpp"
 
-void Analisador::proxPos() {
-    pos++;
-}
-
-bool Analisador::tipo(string token){
-
-    static const unordered_set<string> reservadas = {
-        "int", "bool", "string", "float"
-    };
-
-    return reservadas.count(token) > 0;
-}
-
 bool Analisador::D2(NoArvore& pai) {
     // FIRST(D2) = {=, +=, -=}  →  row D2, col =  → rule 4
     // FOLLOW(D2) = {",", ";"}  →  row D2, col , and ; → rule 5 (ε)
 
-    classeToken cls = tabela[pos].classe;
-    string nome     = tabela[pos].nome;
+    string nome = tabela[pos].nome;
 
     // ε production: nothing to consume
     if (nome == "," || nome == ";" || pos >= (int)tabela.size())
@@ -47,21 +33,19 @@ bool Analisador::D2(NoArvore& pai) {
 }
 
 bool Analisador::D3(NoArvore& pai) {
-    // Rule 6: D3 → <identificador> | <numeral> | <literal> | <expressão>
-    // FIRST(D3) = {a}  (identifiers, numerals, literals, expressions)
-
     classeToken cls = tabela[pos].classe;
+    string nome = tabela[pos].nome;
 
     if (cls == classeToken::IDENTIFICADORES ||
         cls == classeToken::NUMERAIS        ||
-        cls == classeToken::LITERAIS
-        // cls == classeToken::EXPRESSAO
-        //     AAAAAAAAAAAAAAAARRUMAR DEPOIS
-    ) {
+        cls == classeToken::LITERAIS        ||
+        nome == "!" || nome == "(" || nome == "false" || nome == "true") {
 
-        NoArvore d3No(pos, tipoStatement::TOKEN);
+        NoArvore d3No(-1, tipoStatement::EXPRESSAO);
         pai.filhos.push_back(d3No);
-        proxPos();
+        NoArvore& noAtual = pai.filhos.back();
+
+        if(!expressao(noAtual)) return false;
         return true;
     }
 

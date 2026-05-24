@@ -1,12 +1,14 @@
 #include "analisador_sintatico.hpp"
 
-int analisadorSintatico(vector<tabelaToken> tabela){
+int analisadorSintatico(vector<tabelaToken>& tabela){
 
-    NoArvore raiz(-1, tipoStatement::SENTENCA);
+    Analisador ParserArvore(tabela);
 
-    
-
-
-
-
+    if(ParserArvore.sentenca(ParserArvore.raiz) && ParserArvore.fimDaEntrada()){
+        std::cout << "Sucesso" << "\n";
+        return 1;
+    } else {
+        std::cout << "fracasso" << "\n";
+        return 0;
+    }
 }

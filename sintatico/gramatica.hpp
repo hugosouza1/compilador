@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -7,7 +9,7 @@
 #include <unordered_set>
 
 #include "arvoreHandler.hpp"
-#include "analisador_lexico.hpp"
+#include "../lexico/tokenHandler.hpp"
 
 using namespace std;
 
@@ -18,7 +20,6 @@ private:
     int pos;
 
 public:
-
     NoArvore raiz;
 
     Analisador(vector<tabelaToken> token)
@@ -28,6 +29,7 @@ public:
 
     void proxPos();
     bool tipo(string token);
+    bool fimDaEntrada();
 
           
     bool declaracao(NoArvore& pai);
@@ -45,13 +47,21 @@ public:
     bool TL1(NoArvore& pai);
     bool ER(NoArvore& pai);
     bool ER1(NoArvore& pai);
-    bool COMP(NoArvore& pai);
     bool F(NoArvore& pai);
     bool T(NoArvore& pai);
     bool T1(NoArvore& pai);
-    bool EA(NoArvore& pai);
     bool EA1(NoArvore& pai);
     bool P(NoArvore& pai);
 
+    bool bloco(NoArvore& pai);
 
+    bool condicao(NoArvore& pai);
+    bool C1(NoArvore& pai);
+    bool C2(NoArvore& pai);
+
+    bool repeticao(NoArvore& pai);
+
+    bool sentenca(NoArvore& pai);
+    bool S1(NoArvore& pai);
+    
 };

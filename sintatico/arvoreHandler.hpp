@@ -17,11 +17,11 @@ enum class tipoStatement {
 
 
 struct NoArvore {
-    tipoStatement tipo;
     int id;
+    tipoStatement tipo;
     vector<NoArvore> filhos;
 
     NoArvore(int id, tipoStatement tipo)
         : id(id), tipo(tipo) {}
-        
+
 };

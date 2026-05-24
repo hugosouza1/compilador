@@ -6,5 +6,7 @@
 #include <iomanip>
 #include <algorithm>
 
-#include "analisador_lexico.hpp"
-#include "arvoreHandler.hpp"
+#include "../lexico/tokenHandler.hpp"
+#include "gramatica.hpp"
+
+int analisadorSintatico(vector<tabelaToken>& tabela);

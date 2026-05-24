@@ -1,0 +1,81 @@
+#include "gramatica.hpp"
+
+void Analisador::proxPos() {
+    pos++;
+}
+
+bool Analisador::fimDaEntrada() { 
+    return pos >= (int)tabela.size(); 
+}
+
+bool Analisador::tipo(string token){
+
+    static const unordered_set<string> reservadas = {
+        "int", "bool", "string", "float"
+    };
+
+    return reservadas.count(token) > 0;
+}
+
+bool Analisador::S1(NoArvore& pai){
+    string nome = tabela[pos].nome;
+    if(nome == "}" || pos >= (int)tabela.size())
+        return true;
+    
+    // n precisa de um intermediario, pq embaixo ja cria
+    if(!sentenca(pai)) return false;
+
+    return true;
+}
+
+bool Analisador::sentenca(NoArvore& pai){
+    NoArvore sentNo(-1, tipoStatement::SENTENCA);
+    pai.filhos.push_back(sentNo);
+    NoArvore& noAtual = pai.filhos.back();
+
+    // FIRST(declaracao) = tipo
+    if(tipo(tabela[pos].nome)){
+        if(!declaracao(noAtual)) return false;
+        if(tabela[pos].nome != ";") return false;
+        NoArvore ptNo(pos, tipoStatement::TOKEN);
+        noAtual.filhos.push_back(ptNo);
+        proxPos();
+
+        if(!S1(noAtual)) return false;
+        return true;
+    }
+
+    // FIRST(expressao) = !, (, a, true, false, numeral, literal
+    if(tabela[pos].nome == "!" || tabela[pos].nome == "(" ||
+       tabela[pos].nome == "true" || tabela[pos].nome == "false" ||
+       tabela[pos].classe == classeToken::IDENTIFICADORES ||
+       tabela[pos].classe == classeToken::NUMERAIS ||
+       tabela[pos].classe == classeToken::LITERAIS){
+        if(!expressao(noAtual)) return false;
+        if(tabela[pos].nome != ";") return false;
+        NoArvore ptNo(pos, tipoStatement::TOKEN);
+        noAtual.filhos.push_back(ptNo);
+        proxPos();
+
+        if(!S1(noAtual)) return false;
+        return true;
+    }
+
+    // FIRST(condicao) = if
+    if(tabela[pos].nome == "if"){
+        if(!condicao(noAtual)) return false;
+
+        if(!S1(noAtual)) return false;
+        return true;
+    }
+
+    // FIRST(repeticao) = while/for/
+    if(tabela[pos].nome == "while" || tabela[pos].nome == "for"){
+        if(!repeticao(noAtual)) return false;
+
+        if(!S1(noAtual)) return false;
+        return true;
+    }
+
+    return false;
+}
