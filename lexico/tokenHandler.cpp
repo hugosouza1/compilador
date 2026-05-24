@@ -138,9 +138,7 @@ int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabel
                         // salvarToken(classeToken::COMENTARIOS, token, arquivo, tabela);
                         return 1;
                     }
-                }
-                
-                token += batedor;
+                }   
             }
             erroFormado("COMENTARIO MAL FORMATADO!", arquivo, token, tabelaInvalidos);
 return 1;

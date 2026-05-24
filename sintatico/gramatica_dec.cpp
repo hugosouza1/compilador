@@ -3,11 +3,13 @@
 bool Analisador::D2(NoArvore& pai) {
     // FIRST(D2) = {=, +=, -=}  →  row D2, col =  → rule 4
     // FOLLOW(D2) = {",", ";"}  →  row D2, col , and ; → rule 5 (ε)
+    if (pos >= (int)tabela.size())
+        return true;
 
     string nome = tabela[pos].nome;
 
     // ε production: nothing to consume
-    if (nome == "," || nome == ";" || pos >= (int)tabela.size())
+    if (nome == "," || nome == ";")
         return true;
 
     // Rule 4: D2 → <OP> <D3>
@@ -33,6 +35,10 @@ bool Analisador::D2(NoArvore& pai) {
 }
 
 bool Analisador::D3(NoArvore& pai) {
+
+    if (pos >= (int)tabela.size())
+        return false;
+    
     classeToken cls = tabela[pos].classe;
     string nome = tabela[pos].nome;
 
@@ -54,6 +60,9 @@ bool Analisador::D3(NoArvore& pai) {
 
 bool Analisador::D1(NoArvore& pai) {
 
+    if (pos >= (int)tabela.size())
+        return false;
+
     if (tabela[pos].nome == ";")
         return true;
 
@@ -68,7 +77,7 @@ bool Analisador::D1(NoArvore& pai) {
         noAtual.filhos.push_back(virgulaNo);
         proxPos();
 
-        if (tabela[pos].classe != classeToken::IDENTIFICADORES)
+        if (pos >= (int)tabela.size() || tabela[pos].classe != classeToken::IDENTIFICADORES)
             return false;
 
         NoArvore idNo(pos, tipoStatement::TOKEN);
@@ -87,7 +96,7 @@ bool Analisador::D1(NoArvore& pai) {
 
 bool Analisador::declaracao(NoArvore& pai) {
 
-    if (!tipo(tabela[pos].nome))
+    if (pos >= (int)tabela.size() || !tipo(tabela[pos].nome))
         return false;
 
     NoArvore declaracaoNo(-1, tipoStatement::DECLARACAO);
@@ -99,7 +108,7 @@ bool Analisador::declaracao(NoArvore& pai) {
     noAtual.filhos.push_back(tipoNo);
     proxPos();
 
-    if (tabela[pos].classe != classeToken::IDENTIFICADORES)
+    if (pos >= (int)tabela.size() || tabela[pos].classe != classeToken::IDENTIFICADORES)
         return false;
 
     NoArvore idNo(pos, tipoStatement::TOKEN);

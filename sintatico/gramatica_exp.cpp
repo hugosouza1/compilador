@@ -8,16 +8,21 @@ bool Analisador::expressao(NoArvore& pai){
 bool Analisador::ATR(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
     
-    if(!EL(pai))   return false;      
-    if(!ATR1(pai)) return false;
+    if(!EL(noAtual))   return false;      
+    if(!ATR1(noAtual)) return false;
     return true; 
 }
 
 bool Analisador::ATR1(NoArvore& pai){
+
+    if (pos >= (int)tabela.size())
+            return true;
+
     string nome = tabela[pos].nome;
     
-    if (nome == ")" || nome == ";" || pos >= (int)tabela.size())
+    if (nome == ")" || nome == ";")
         return true;
 
     if(nome == "=" || nome == "+=" || nome == "-="){
@@ -38,17 +43,20 @@ bool Analisador::ATR1(NoArvore& pai){
 bool Analisador::EL(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
     
-    if( ! TL(pai)) return false; 
-    if( ! EL1(pai)) return false; 
+    if( ! TL(noAtual)) return false; 
+    if( ! EL1(noAtual)) return false; 
     return true;
 }
 
 
 bool Analisador::EL1(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+            return true;
 
     string nome = tabela[pos].nome;
-    if (nome == ")" || nome == ";" || pos >= (int)tabela.size() || nome == "=" || nome == "-=" || nome == "+=")
+    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=")
     return true;
 
     if(nome == "||"){
@@ -69,17 +77,20 @@ bool Analisador::EL1(NoArvore& pai){
 bool Analisador::TL(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
             
-    if( ! ER(pai)) return false; 
-    if( ! TL1(pai)) return false; 
+    if( ! ER(noAtual)) return false; 
+    if( ! TL1(noAtual)) return false; 
 
     return true;
 }
 
 
 bool Analisador::TL1(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+            return true;
     string nome = tabela[pos].nome;
-    if (nome == ")" || nome == ";" || pos >= (int)tabela.size() || nome == "=" || nome == "-=" || nome == "+=" || nome == "||")
+    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == "||")
         return true;
 
     if(nome == "&&"){
@@ -100,17 +111,21 @@ bool Analisador::TL1(NoArvore& pai){
 bool Analisador::ER(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
     
-    if( ! EA(pai)) return false; 
-    if( ! ER1(pai)) return false; 
+    if( ! EA(noAtual)) return false; 
+    if( ! ER1(noAtual)) return false; 
     return true;
 
 }
 
 
 bool Analisador::ER1(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+        return true;
+
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || pos >= (int)tabela.size() || nome == "=" || nome == "-=" || nome == "+=")
+    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=")
     return true;
 
     if(nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!="){
@@ -128,6 +143,10 @@ bool Analisador::ER1(NoArvore& pai){
 
 
 bool Analisador::F(NoArvore& pai){
+
+    if (pos >= (int)tabela.size())
+            return false;
+
     if(tabela[pos].nome == "!"){
         NoArvore opNo(pos, tipoStatement::TOKEN);
         pai.filhos.push_back(opNo);
@@ -144,7 +163,7 @@ bool Analisador::F(NoArvore& pai){
         
         if(!expressao(pai)) return false;
 
-        if(tabela[pos].nome != ")") return false;
+        if(pos >= (int)tabela.size() || tabela[pos].nome != ")") return false;
         NoArvore fechaNo(pos, tipoStatement::TOKEN);
         pai.filhos.push_back(fechaNo);
         proxPos();
@@ -186,17 +205,21 @@ bool Analisador::F(NoArvore& pai){
 bool Analisador::T(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
     
-    if(!F(pai))  return false;
-    if(!T1(pai))  return false;
+    if(!F(noAtual))  return false;
+    if(!T1(noAtual))  return false;
 
     return true; 
 }
 
 
 bool Analisador::T1(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+        return true;
+
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || pos >= (int)tabela.size() || nome == "=" || nome == "-=" || nome == "+=" ||
+    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" ||
         nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=")
         return true;
 
@@ -218,17 +241,20 @@ bool Analisador::T1(NoArvore& pai){
 bool Analisador::EA(NoArvore& pai){      
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
+    NoArvore& noAtual = pai.filhos.back();
 
-    if(!T(pai))  return false;
-    if(!EA1(pai))  return false;
+    if(!T(noAtual))  return false;
+    if(!EA1(noAtual))  return false;
 
     return true; 
 }
 
 
 bool Analisador::EA1(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+            return true;
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || pos >= (int)tabela.size() || nome == "=" || nome == "-=" || nome == "+=" ||
+    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" ||
         nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=")
         return true;
 
@@ -248,6 +274,9 @@ bool Analisador::EA1(NoArvore& pai){
 
 
 bool Analisador::P(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+        return false;
+
     string nome = tabela[pos].nome;
     if (nome == "*" || nome == "/" || nome == ")" || nome == ";" ||
         nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" ||
