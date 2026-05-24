@@ -12,6 +12,7 @@ enum class tipoStatement {
     CONDICAO,
     DECLARACAO,
     SENTENCA,
+    BLOCO,
     TOKEN
 };
 
@@ -25,3 +26,6 @@ struct NoArvore {
         : id(id), tipo(tipo) {}
 
 };
+
+
+void contarNos(const NoArvore& no, int& total, int& folhas);

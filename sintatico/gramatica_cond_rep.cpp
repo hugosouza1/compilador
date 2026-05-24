@@ -3,18 +3,18 @@
 
 bool Analisador::bloco(NoArvore& pai){
     if(tabela[pos].nome == "{"){
-        NoArvore blocoNo(-1, tipoStatement::CONDICAO); // nó intermediário
+        NoArvore blocoNo(-1, tipoStatement::BLOCO);
         pai.filhos.push_back(blocoNo);
         NoArvore& noAtual = pai.filhos.back();
 
-        NoArvore abreNo(pos, tipoStatement::TOKEN); // { como filho
+        NoArvore abreNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(abreNo);
         proxPos();
 
-        if(!sentenca(noAtual)) return false;
+        sentenca(noAtual); // ignora o retorno — bloco pode ser vazio
 
         if(tabela[pos].nome != "}") return false;
-        NoArvore fechaNo(pos, tipoStatement::TOKEN); // } como filho
+        NoArvore fechaNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(fechaNo);
         proxPos();
 
@@ -22,6 +22,8 @@ bool Analisador::bloco(NoArvore& pai){
     }
     return false;
 }
+
+
 
 
 
@@ -54,32 +56,33 @@ bool Analisador::condicao(NoArvore& pai){
     return false;
 }
 
-
 bool Analisador::C1(NoArvore& pai){
+    cerr << "C1: pos=" << pos << "\n";
+    if(pos >= (int)tabela.size()) return true;
 
     string nome = tabela[pos].nome;
-    if (nome == "}" || pos >= (int)tabela.size())
-        return true;
 
     if(nome == "else"){
-        NoArvore c1No(-1, tipoStatement::CONDICAO); // nó intermediário
+        NoArvore c1No(-1, tipoStatement::CONDICAO);
         pai.filhos.push_back(c1No);
         NoArvore& noAtual = pai.filhos.back();
 
-        NoArvore elseNo(pos, tipoStatement::TOKEN); // else como folha
+        NoArvore elseNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(elseNo);
         proxPos();
 
         if(!C2(noAtual)) return false;
         return true;
     }
-   
-    return false; 
-
+    
+    // o de cima resolve
+    return true;
 }
 
-
 bool Analisador::C2(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+        return false;
+
     string nome = tabela[pos].nome;
 
     if(nome == "if")
@@ -93,6 +96,9 @@ bool Analisador::C2(NoArvore& pai){
 
 
 bool Analisador::repeticao(NoArvore& pai){
+    if (pos >= (int)tabela.size())
+        return false;
+
     string nome = tabela[pos].nome;
 
     if(nome == "while"){
@@ -160,6 +166,14 @@ bool Analisador::repeticao(NoArvore& pai){
         // incremento: expressão ou vazio
         if(tabela[pos].nome != ")"){
             if(!expressao(noAtual)) return false;
+            
+            while(tabela[pos].nome == ","){
+                NoArvore virgulaNo(pos, tipoStatement::TOKEN);
+                noAtual.filhos.push_back(virgulaNo);
+                proxPos();
+                
+                if(!expressao(noAtual)) return false;
+            }
         }
 
         // consome )

@@ -1,6 +1,12 @@
 #include "gramatica.hpp"
 
 void Analisador::proxPos() {
+    int total = 0, folhas = 0;
+    contarNos(raiz, total, folhas);
+    cout << "Total: " << total << " | Folhas: " << folhas << " | Intermediários: " << total - folhas << "\n";
+
+    cout << "poooooooooooooooooooooooooos:" << tabela[pos].nome << "\n";
+
     pos++;
 }
 
@@ -18,17 +24,37 @@ bool Analisador::tipo(string token){
 }
 
 bool Analisador::S1(NoArvore& pai){
-    string nome = tabela[pos].nome;
-    if(nome == "}" || pos >= (int)tabela.size())
+    cerr << "S1: pos=" << pos << "\n";
+    if(pos >= (int)tabela.size())
         return true;
-    
-    // n precisa de um intermediario, pq embaixo ja cria
-    if(!sentenca(pai)) return false;
 
+    if(tabela[pos].nome == "}" )
+        return true;
+
+    if(!sentenca(pai)) return false;
     return true;
 }
 
 bool Analisador::sentenca(NoArvore& pai){
+    cerr << "sentenca: pos=" << pos << "\n";
+
+    if(pos >= (int)tabela.size())
+        return false;
+    string nome = tabela[pos].nome;
+    classeToken cls = tabela[pos].classe;
+
+    // checa FIRST antes de criar nó
+    if( nome == "}" )
+        return false;
+
+    if(!tipo(nome) &&
+       nome != "if" && nome != "while" && nome != "for" &&
+       nome != "!" && nome != "(" && nome != "true" && nome != "false" &&
+       cls != classeToken::IDENTIFICADORES &&
+       cls != classeToken::NUMERAIS &&
+       cls != classeToken::LITERAIS)
+        return false;
+
     NoArvore sentNo(-1, tipoStatement::SENTENCA);
     pai.filhos.push_back(sentNo);
     NoArvore& noAtual = pai.filhos.back();

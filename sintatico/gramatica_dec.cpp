@@ -9,7 +9,7 @@ bool Analisador::D2(NoArvore& pai) {
     string nome = tabela[pos].nome;
 
     // ε production: nothing to consume
-    if (nome == "," || nome == ";")
+    if (nome == "," || nome == ";" || nome == ")")
         return true;
 
     // Rule 4: D2 → <OP> <D3>
@@ -38,15 +38,19 @@ bool Analisador::D3(NoArvore& pai) {
 
     if (pos >= (int)tabela.size())
         return false;
-    
+        
     classeToken cls = tabela[pos].classe;
     string nome = tabela[pos].nome;
+        
+    if (nome == ")")
+        return true;
 
     if (cls == classeToken::IDENTIFICADORES ||
         cls == classeToken::NUMERAIS        ||
         cls == classeToken::LITERAIS        ||
         nome == "!" || nome == "(" || nome == "false" || nome == "true") {
-
+        
+        cout << "pos: " << pos << "  token: " << tabela[pos].nome << "\n";
         NoArvore d3No(-1, tipoStatement::EXPRESSAO);
         pai.filhos.push_back(d3No);
         NoArvore& noAtual = pai.filhos.back();
@@ -68,7 +72,7 @@ bool Analisador::D1(NoArvore& pai) {
 
     if (tabela[pos].nome == ",") {
 
-        NoArvore d1No(pos, tipoStatement::DECLARACAO);
+        NoArvore d1No(-1, tipoStatement::DECLARACAO);
         pai.filhos.push_back(d1No);
         NoArvore& noAtual = pai.filhos.back();
 
@@ -77,7 +81,7 @@ bool Analisador::D1(NoArvore& pai) {
         noAtual.filhos.push_back(virgulaNo);
         proxPos();
 
-        if (pos >= (int)tabela.size() || tabela[pos].classe != classeToken::IDENTIFICADORES)
+        if ((pos >= (int)tabela.size()) || (tabela[pos].classe != classeToken::IDENTIFICADORES))
             return false;
 
         NoArvore idNo(pos, tipoStatement::TOKEN);

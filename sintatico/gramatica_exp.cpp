@@ -1,6 +1,7 @@
 #include "gramatica.hpp"
 
 bool Analisador::expressao(NoArvore& pai){
+    cerr << "expressao pos: " << pos << "\n"; 
     if( ! (ATR(pai))) return false;      
     return true;
 }
@@ -22,7 +23,7 @@ bool Analisador::ATR1(NoArvore& pai){
 
     string nome = tabela[pos].nome;
     
-    if (nome == ")" || nome == ";")
+    if (nome == ")" || nome == ";" || nome == ",")
         return true;
 
     if(nome == "=" || nome == "+=" || nome == "-="){
@@ -56,7 +57,7 @@ bool Analisador::EL1(NoArvore& pai){
             return true;
 
     string nome = tabela[pos].nome;
-    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=")
+    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == ",")
     return true;
 
     if(nome == "||"){
@@ -90,7 +91,7 @@ bool Analisador::TL1(NoArvore& pai){
     if (pos >= (int)tabela.size())
             return true;
     string nome = tabela[pos].nome;
-    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == "||")
+    if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == "||" || nome == ",")
         return true;
 
     if(nome == "&&"){
@@ -125,7 +126,7 @@ bool Analisador::ER1(NoArvore& pai){
         return true;
 
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=")
+    if (nome == "||" || nome == ")" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == ",")
     return true;
 
     if(nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!="){
@@ -143,29 +144,38 @@ bool Analisador::ER1(NoArvore& pai){
 
 
 bool Analisador::F(NoArvore& pai){
+    std::cerr << "F: pos=" << pos << " token=" << tabela[pos].nome << "\n";
 
     if (pos >= (int)tabela.size())
             return false;
 
     if(tabela[pos].nome == "!"){
+        NoArvore fNo(-1, tipoStatement::EXPRESSAO);
+        pai.filhos.push_back(fNo);
+        NoArvore& noAtual = pai.filhos.back();
+
         NoArvore opNo(pos, tipoStatement::TOKEN);
-        pai.filhos.push_back(opNo);
+        noAtual.filhos.push_back(opNo);
         proxPos();
         
-        if(!F(pai))  return false;
+        if(!F(noAtual)) return false;
         return true;
     }
 
     if(tabela[pos].nome == "("){
-        NoArvore opNo(pos, tipoStatement::TOKEN);
-        pai.filhos.push_back(opNo);
+        NoArvore fNo(-1, tipoStatement::EXPRESSAO);
+        pai.filhos.push_back(fNo);
+        NoArvore& noAtual = pai.filhos.back();
+
+        NoArvore abreNo(pos, tipoStatement::TOKEN);
+        noAtual.filhos.push_back(abreNo);
         proxPos();
         
-        if(!expressao(pai)) return false;
+        if(!expressao(noAtual)) return false;
 
         if(pos >= (int)tabela.size() || tabela[pos].nome != ")") return false;
         NoArvore fechaNo(pos, tipoStatement::TOKEN);
-        pai.filhos.push_back(fechaNo);
+        noAtual.filhos.push_back(fechaNo);
         proxPos();
         return true;
     }
@@ -215,12 +225,12 @@ bool Analisador::T(NoArvore& pai){
 
 
 bool Analisador::T1(NoArvore& pai){
-    if (pos >= (int)tabela.size())
-        return true;
-
+    if (pos >= (int)tabela.size()) return true;
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" ||
-        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=")
+
+    if (nome == "||" || nome == "&&" || nome == ";" || nome == ")" || 
+        nome == "=" || nome == "-=" || nome == "+=" ||
+        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" || nome == ",")
         return true;
 
     if(nome == "*" || nome == "/"){
@@ -254,8 +264,8 @@ bool Analisador::EA1(NoArvore& pai){
     if (pos >= (int)tabela.size())
             return true;
     string nome = tabela[pos].nome;
-    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" ||
-        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=")
+    if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == "," ||
+        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" || nome == ")")
         return true;
 
     if(nome == "+" || nome == "-"){
@@ -281,7 +291,7 @@ bool Analisador::P(NoArvore& pai){
     if (nome == "*" || nome == "/" || nome == ")" || nome == ";" ||
         nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" ||
         nome == "&&" || nome == "||" || nome == "+" || nome == "-" ||
-        nome == "=" || nome == "+=" || nome == "-=")
+        nome == "=" || nome == "+=" || nome == "-=" || nome == ",")
         return true;
 
     if(nome == "++" || nome == "--"){

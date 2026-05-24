@@ -294,12 +294,13 @@ int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
 
         // caractere inavlidos
         else if (!isspace(batedor) &&
-                 batedor != '"' && batedor != '/' &&
-                 batedor != '+' && batedor != '-' && batedor != '*' &&
-                 batedor != '=' && batedor != '<' && batedor != '>' &&
-                 batedor != '!' && batedor != '&' && batedor != '|' &&
-                 batedor != '[' && batedor != ']' &&
-                 batedor != '{' && batedor != '}' && batedor != '(' && batedor != ')'
+            batedor != '"' && batedor != '/' &&
+            batedor != '+' && batedor != '-' && batedor != '*' &&
+            batedor != '=' && batedor != '<' && batedor != '>' &&
+            batedor != '!' && batedor != '&' && batedor != '|' &&
+            batedor != '[' && batedor != ']' &&
+            batedor != '{' && batedor != '}' && batedor != '(' && batedor != ')' &&
+            batedor != ';' && batedor != ',' 
         ) {
             arquivo.lerChar(batedor);
             token += batedor;
