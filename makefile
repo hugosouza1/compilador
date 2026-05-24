@@ -1,24 +1,38 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra 
+CXXFLAGS = -Wall -Wextra
 
-# pasta .o
+# Diretórios
 BUILD_DIR = build
 
-SRC = analisador_lexico.cpp leitorArquivo.cpp tokenHandler.cpp
+# Pastas dos módulos
+LEXICO_DIR = lexico
+SINTATICO_DIR = sintatico
+SEMANTICO_DIR = semantico
+
+# Arquivos fonte
+SRC = \
+	main.cpp \
+	$(LEXICO_DIR)/analisador_lexico.cpp \
+	$(LEXICO_DIR)/leitorArquivo.cpp \
+	$(LEXICO_DIR)/tokenHandler.cpp
+
+# Objetos
 OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)
+
+# Executável
 EXEC = compilador
 ENTRADA = txt.txt
 
 all: $(EXEC)
 	./$(EXEC) $(ENTRADA)
 
+# Linkagem
 $(EXEC): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $(EXEC) $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-$(BUILD_DIR)/%.o: %.cpp | $(BUILD_DIR)
+# Compilação dos .cpp
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

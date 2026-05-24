@@ -1,15 +1,6 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <iomanip>
-#include <algorithm>
+#include "analisador_lexico.hpp"
 
-#include "leitorArquivo.h"
-#include "tokenHandler.h"
-
-using namespace std;
-
-void imprimirTokens(vector<tabelaToken> tabela){
+void imprimirTokens(vector<tabelaToken> tabela) {
     cout << left
          << setw(5) << "POS"
          << setw(20) << "CLASSE"
@@ -36,7 +27,7 @@ void imprimirTokens(vector<tabelaToken> tabela){
 
 }
 
-void imprimeErro(vector<tabelaERRO> tabelaInvalidos ){
+void imprimeErro(vector<tabelaERRO> tabelaInvalidos ) {
     for (const auto &t : tabelaInvalidos) {
         cout << string(23, '-') + "ERRO" + string(23, '-') << "\n";
         
@@ -51,8 +42,8 @@ void imprimeErro(vector<tabelaERRO> tabelaInvalidos ){
 }
 
 
-int main(int argc, char *argv[]) {
-    if(argc > 2){cout << "erro\n"; return 1;}
+vector<tabelaToken> analisadorLexico(int argc, char *argv[]) {
+    if(argc > 2){cout << "erro\n"; return {};}
     leitorArquivo arquivo(argv[1]);
 
     vector<tabelaToken> tabela;
@@ -83,6 +74,5 @@ int main(int argc, char *argv[]) {
     cout << "\n\n";
     imprimeErro(tabelaInvalidos);
 
-    return 0;
+    return tabela;
 }
-

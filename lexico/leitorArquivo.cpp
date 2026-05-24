@@ -1,4 +1,4 @@
-#include "leitorArquivo.h"
+#include "leitorArquivo.hpp"
 
 leitorArquivo::leitorArquivo(const std::string& nomeArquivo): linha(1), coluna(0), colunaPivo(0), arquivo(nomeArquivo) {}
 

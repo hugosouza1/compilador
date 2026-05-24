@@ -7,7 +7,7 @@
 #include <cctype>
 #include <unordered_set>
 
-#include "leitorArquivo.h"
+#include "leitorArquivo.hpp"
 
 using namespace std;
 
