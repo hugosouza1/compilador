@@ -263,9 +263,8 @@ int separador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela) {
 
 bool ehPalavraReservada(const string& token) {
     static const unordered_set<string> reservadas = {
-        "if", "for", "int", "bool", "string", "float"
+        "if", "for", "int", "bool", "string", "float", "while", "else", "true", "false"
     };
-
     return reservadas.count(token) > 0; 
 }
 

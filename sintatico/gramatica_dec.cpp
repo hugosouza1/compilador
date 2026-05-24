@@ -50,7 +50,7 @@ bool Analisador::D3(NoArvore& pai) {
         cls == classeToken::LITERAIS        ||
         nome == "!" || nome == "(" || nome == "false" || nome == "true") {
         
-        cout << "pos: " << pos << "  token: " << tabela[pos].nome << "\n";
+        // cout << "pos: " << pos << "  token: " << tabela[pos].nome << "\n";
         NoArvore d3No(-1, tipoStatement::EXPRESSAO);
         pai.filhos.push_back(d3No);
         NoArvore& noAtual = pai.filhos.back();

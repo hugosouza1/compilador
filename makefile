@@ -20,7 +20,9 @@ SRC = \
 	$(SINTATICO_DIR)/gramatica_cond_rep.cpp \
 	$(SINTATICO_DIR)/gramatica_dec.cpp \
 	$(SINTATICO_DIR)/gramatica_exp.cpp \
-	$(SINTATICO_DIR)/gramatica_sent.cpp 
+	$(SINTATICO_DIR)/gramatica_sent.cpp \
+	$(SINTATICO_DIR)/gramatica.cpp 
+
 
 # Objetos
 OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)

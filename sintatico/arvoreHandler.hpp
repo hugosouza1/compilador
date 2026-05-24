@@ -13,6 +13,7 @@ enum class tipoStatement {
     DECLARACAO,
     SENTENCA,
     BLOCO,
+    RAIZ,
     TOKEN
 };
 
@@ -24,7 +25,8 @@ struct NoArvore {
 
     NoArvore(int id, tipoStatement tipo)
         : id(id), tipo(tipo) {}
-
+    
+    void podar();
 };
 
 

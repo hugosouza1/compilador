@@ -14,23 +14,25 @@
 using namespace std;
 
 class Analisador {
+    private:
+        vector<tabelaToken> tabela;
+        int pos;
 
-private:
-    vector<tabelaToken> tabela;
-    int pos;
 
-public:
-    NoArvore raiz;
+    public:
+        NoArvore raiz;
 
-    Analisador(vector<tabelaToken> token)
-        : tabela(token),
-          pos(0),
-          raiz(-1, tipoStatement::SENTENCA) {}
+        Analisador(vector<tabelaToken> token)
+            : tabela(token),
+              pos(0),
+              raiz(-1, tipoStatement::RAIZ) {}
+
+    void imprimirErro();
 
     void proxPos();
+    void sincronizarPanico();
     bool tipo(string token);
     bool fimDaEntrada();
-
           
     bool declaracao(NoArvore& pai);
     bool D1(NoArvore& pai);
@@ -62,6 +64,5 @@ public:
     bool repeticao(NoArvore& pai);
 
     bool sentenca(NoArvore& pai);
-    bool S1(NoArvore& pai);
-    
+    bool S1(NoArvore& pai);    
 };

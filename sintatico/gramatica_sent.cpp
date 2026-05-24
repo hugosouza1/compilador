@@ -1,30 +1,7 @@
 #include "gramatica.hpp"
 
-void Analisador::proxPos() {
-    int total = 0, folhas = 0;
-    contarNos(raiz, total, folhas);
-    cout << "Total: " << total << " | Folhas: " << folhas << " | Intermediários: " << total - folhas << "\n";
-
-    cout << "poooooooooooooooooooooooooos:" << tabela[pos].nome << "\n";
-
-    pos++;
-}
-
-bool Analisador::fimDaEntrada() { 
-    return pos >= (int)tabela.size(); 
-}
-
-bool Analisador::tipo(string token){
-
-    static const unordered_set<string> reservadas = {
-        "int", "bool", "string", "float"
-    };
-
-    return reservadas.count(token) > 0;
-}
-
 bool Analisador::S1(NoArvore& pai){
-    cerr << "S1: pos=" << pos << "\n";
+    // cerr << "S1: pos=" << pos << "\n";
     if(pos >= (int)tabela.size())
         return true;
 
@@ -36,7 +13,7 @@ bool Analisador::S1(NoArvore& pai){
 }
 
 bool Analisador::sentenca(NoArvore& pai){
-    cerr << "sentenca: pos=" << pos << "\n";
+    // cerr << "sentenca: pos=" << pos << "\n";
 
     if(pos >= (int)tabela.size())
         return false;

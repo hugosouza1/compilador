@@ -4,8 +4,12 @@ for(int i = 0, j = n; i < j; i--, j++, k++){
     int chique = 0;
 }
 
-if(opa == true){
-    badalo++;
+while(false){
+
+}
+
+if(0 < 190){
+    bloco = 10;
 }
 
 if(true){} else {}

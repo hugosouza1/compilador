@@ -11,7 +11,7 @@ bool Analisador::bloco(NoArvore& pai){
         noAtual.filhos.push_back(abreNo);
         proxPos();
 
-        sentenca(noAtual); // ignora o retorno — bloco pode ser vazio
+        sentenca(noAtual); 
 
         if(tabela[pos].nome != "}") return false;
         NoArvore fechaNo(pos, tipoStatement::TOKEN);
@@ -57,7 +57,7 @@ bool Analisador::condicao(NoArvore& pai){
 }
 
 bool Analisador::C1(NoArvore& pai){
-    cerr << "C1: pos=" << pos << "\n";
+    // cerr << "C1: pos=" << pos << "\n";
     if(pos >= (int)tabela.size()) return true;
 
     string nome = tabela[pos].nome;
@@ -166,7 +166,7 @@ bool Analisador::repeticao(NoArvore& pai){
         // incremento: expressão ou vazio
         if(tabela[pos].nome != ")"){
             if(!expressao(noAtual)) return false;
-            
+            // expressão , expressão
             while(tabela[pos].nome == ","){
                 NoArvore virgulaNo(pos, tipoStatement::TOKEN);
                 noAtual.filhos.push_back(virgulaNo);
