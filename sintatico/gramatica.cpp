@@ -29,12 +29,6 @@ void Analisador::imprimirErro() {
 }
 
 void Analisador::proxPos() {
-    // int total = 0, folhas = 0;
-    // contarNos(raiz, total, folhas);
-    // cout << "Total: " << total << " | Folhas: " << folhas << " | Intermediários: " << total - folhas << "\n";
-
-    // cout << "poooooooooooooooooooooooooos:" << tabela[pos].nome << "\n";
-
     pos++;
 }
 

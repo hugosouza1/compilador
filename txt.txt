@@ -1,16 +1,35 @@
-int x = 0, y = 0;
+int x = 0, y = 0, z = 10;
+int x = 0;
+int x = ((b+ a) * 70) / 2; 
+
+int oi = (x*y);
 
 for(int i = 0, j = n; i < j; i--, j++, k++){
-    int chique = 0;
+    int opa = 0;
 }
 
-while(false){
+for(;;){}
 
+while(i < 10){
+    i++;
 }
 
-if(0 < 190){
-    bloco = 10;
+
+if(true){
+    if(true){
+        coisa++;
+    } else if(false){
+        coisa--;
+    } else {
+        coisa += 2;
+    }
 }
 
-if(true){} else {}
-if(false){} else if(opa){} else {}
+if(cond == 10){
+    if(cond <= 10){
+        if( ! cond ){
+            if(false){
+            }
+        }
+    }
+}

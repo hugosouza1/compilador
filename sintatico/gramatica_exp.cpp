@@ -1,7 +1,6 @@
 #include "gramatica.hpp"
 
 bool Analisador::expressao(NoArvore& pai){
-    // cerr << "expressao pos: " << pos << "\n"; 
     if( ! (ATR(pai))) return false;      
     return true;
 }
@@ -27,6 +26,9 @@ bool Analisador::ATR1(NoArvore& pai){
         return true;
 
     if(nome == "=" || nome == "+=" || nome == "-="){
+        // NoArvore &aux = pai;
+        pai.tipo = tipoStatement::ATRIBUICAO;
+
         NoArvore opNo(pos, tipoStatement::TOKEN); 
         pai.filhos.push_back(opNo);
         proxPos();
@@ -145,10 +147,8 @@ bool Analisador::ER1(NoArvore& pai){
 
 
 bool Analisador::F(NoArvore& pai){
-    // std::cerr << "F: pos=" << pos << " token=" << tabela[pos].nome << "\n";
 
-    if (pos >= (int)tabela.size())
-            return false;
+    if (pos >= (int)tabela.size()) return false;
 
     if(tabela[pos].nome == "!"){
         NoArvore fNo(-1, tipoStatement::EXPRESSAO);
@@ -206,10 +206,7 @@ bool Analisador::F(NoArvore& pai){
         return true;
     }
 
-
     return false;
-
-
 }
 
 
@@ -232,7 +229,8 @@ bool Analisador::T1(NoArvore& pai){
 
     if (nome == "||" || nome == "&&" || nome == ";" || nome == ")" || 
         nome == "=" || nome == "-=" || nome == "+=" ||
-        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" || nome == ",")
+        nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" || nome == "," || 
+        nome == "+" || nome == "-")
         return true;
 
     if(nome == "*" || nome == "/"){
@@ -267,6 +265,7 @@ bool Analisador::EA1(NoArvore& pai){
             return true;
 
     string nome = tabela[pos].nome;
+
     if (nome == "||" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == "," ||
         nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!=" || nome == ")")
         return true;

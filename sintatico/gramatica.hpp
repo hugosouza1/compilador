@@ -18,7 +18,6 @@ class Analisador {
         vector<tabelaToken> tabela;
         int pos;
 
-
     public:
         NoArvore raiz;
 
@@ -34,11 +33,13 @@ class Analisador {
     bool tipo(string token);
     bool fimDaEntrada();
           
+    // declaracao
     bool declaracao(NoArvore& pai);
     bool D1(NoArvore& pai);
     bool D2(NoArvore& pai);
     bool D3(NoArvore& pai);
 
+    // expressao / atribuicao
     bool expressao(NoArvore& pai);
     bool ATR(NoArvore& pai);
     bool ATR1(NoArvore& pai);
@@ -55,14 +56,17 @@ class Analisador {
     bool EA1(NoArvore& pai);
     bool P(NoArvore& pai);
 
+    // bloco - condicao e repeticao
     bool bloco(NoArvore& pai);
 
+    // condicao
     bool condicao(NoArvore& pai);
     bool C1(NoArvore& pai);
     bool C2(NoArvore& pai);
 
+    // repeticao
     bool repeticao(NoArvore& pai);
-
+    
     bool sentenca(NoArvore& pai);
     bool S1(NoArvore& pai);    
 };

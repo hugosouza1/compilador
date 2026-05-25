@@ -6,7 +6,4 @@ int main(int argc, char *argv[]){
     vector<tabelaToken> saidaLexico = analisadorLexico(argc, argv);
     
     analisadorSintatico(saidaLexico);
-
-
-
 }

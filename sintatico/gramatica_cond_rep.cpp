@@ -25,8 +25,6 @@ bool Analisador::bloco(NoArvore& pai){
 
 
 
-
-
 bool Analisador::condicao(NoArvore& pai){
     if(tabela[pos].nome == "if"){
         NoArvore condNo(-1, tipoStatement::CONDICAO); // nó intermediário
@@ -49,8 +47,8 @@ bool Analisador::condicao(NoArvore& pai){
         noAtual.filhos.push_back(fechaNo);
         proxPos();
 
-        if(!bloco(noAtual)) return false; // noAtual, não pai
-        if(!C1(noAtual))    return false; // noAtual, não pai
+        if(!bloco(noAtual)) return false; 
+        if(!C1(noAtual))    return false; 
         return true;
     }
     return false;
@@ -75,7 +73,7 @@ bool Analisador::C1(NoArvore& pai){
         return true;
     }
     
-    // o de cima resolve
+    // o de cima resolve o erro
     return true;
 }
 

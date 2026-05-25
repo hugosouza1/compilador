@@ -20,10 +20,6 @@ bool Analisador::sentenca(NoArvore& pai){
     string nome = tabela[pos].nome;
     classeToken cls = tabela[pos].classe;
 
-    // checa FIRST antes de criar nó
-    if( nome == "}" )
-        return false;
-
     if(!tipo(nome) &&
        nome != "if" && nome != "while" && nome != "for" &&
        nome != "!" && nome != "(" && nome != "true" && nome != "false" &&
@@ -48,7 +44,7 @@ bool Analisador::sentenca(NoArvore& pai){
         return true;
     }
 
-    // FIRST(expressao) = !, (, a, true, false, numeral, literal
+    // FIRST(expressao) = !, (, identi, true, false, numeral, literal
     if(tabela[pos].nome == "!" || tabela[pos].nome == "(" ||
        tabela[pos].nome == "true" || tabela[pos].nome == "false" ||
        tabela[pos].classe == classeToken::IDENTIFICADORES ||
@@ -72,7 +68,7 @@ bool Analisador::sentenca(NoArvore& pai){
         return true;
     }
 
-    // FIRST(repeticao) = while/for/
+    // FIRST(repeticao) = while, for
     if(tabela[pos].nome == "while" || tabela[pos].nome == "for"){
         if(!repeticao(noAtual)) return false;
 

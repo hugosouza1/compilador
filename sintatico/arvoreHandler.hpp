@@ -6,11 +6,14 @@
 
 using namespace std;
 
+#include "../lexico/tokenHandler.hpp"
+
 enum class tipoStatement {
     EXPRESSAO,
     REPETICAO,
     CONDICAO,
     DECLARACAO,
+    ATRIBUICAO,
     SENTENCA,
     BLOCO,
     RAIZ,
@@ -29,5 +32,5 @@ struct NoArvore {
     void podar();
 };
 
-
-void contarNos(const NoArvore& no, int& total, int& folhas);
+string tipoToString(tipoStatement t);
+void imprimirArvore(const NoArvore& no, const vector<tabelaToken>& tabela, string prefixo, bool ultimo);

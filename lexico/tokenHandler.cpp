@@ -157,11 +157,15 @@ int operadoMatLog(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
 
         arquivo.peekChar(batedor);
 
-        if((batedor == pivo) || (batedor == '=' && (pivo == '<' || pivo == '>'))) {
+        bool formaDouble = (batedor == pivo) ||  // == || && ++ --
+                           (batedor == '=' && (pivo == '<'  || pivo == '>' ||
+                                               pivo == '+'  || pivo == '-' ||
+                                               pivo == '!'));  // <= >= += -= != ==
+
+        if(formaDouble) {
             string token = "";
             token += pivo;
             token += batedor;
-
             arquivo.lerChar(batedor);
             salvarToken(classeToken::OPERADOR_LOGICO_MATEMATICO, token, arquivo, tabela);
             return 1;
