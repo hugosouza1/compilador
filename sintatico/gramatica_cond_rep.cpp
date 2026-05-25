@@ -6,18 +6,23 @@ bool Analisador::bloco(NoArvore& pai){
         NoArvore blocoNo(-1, tipoStatement::BLOCO);
         pai.filhos.push_back(blocoNo);
         NoArvore& noAtual = pai.filhos.back();
-
+        // cerr << "comeco\n";
+        
         NoArvore abreNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(abreNo);
         proxPos();
-
+        
         sentenca(noAtual); 
+        // cerr << "meio\n";
 
+        if(fimDaEntrada()) return false;
+        
         if(tabela[pos].nome != "}") return false;
         NoArvore fechaNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(fechaNo);
         proxPos();
-
+        
+        // cerr << "fim\n";
         return true;
     }
     return false;

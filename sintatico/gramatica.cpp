@@ -3,29 +3,69 @@
 void Analisador::imprimirErro() {
     
     auto imprimirLinha = [&](int i, bool destaque) {
-        if(i < 0 || i >= (int)tabela.size()) return;
+
+        if(i < 0 || i >= (int)tabela.size())
+            return;
+
         const tabelaToken& t = tabela[i];
+
         cout << (destaque ? " >>> " : "     ");
-        cout << "[" << setw(3) << i << "] "
-             << setw(18) << left << toSString(t.classe)
-             << " | " << setw(15) << left << t.nome
-             << " | linha " << setw(3) << t.linha
-             << " col " << setw(3) << t.coluna;
-        if(destaque) cout << "  <== erro por aqui";
+
+        cout << "[" << setw(3) << right << i << "] "
+             << setw(22) << left  << toSString(t.classe)
+             << " | "
+             << setw(15) << left  << t.nome
+             << " | linha "
+             << setw(3) << right << t.linha
+             << " col "
+             << setw(3) << right << t.coluna;
+
+        if(destaque)
+            cout << "   <== erro";
+
         cout << "\n";
     };
 
-    cout << "\n==== ERRO SINTÁTICO ===================================================\n";
-    imprimirLinha(pos - 3, false);
-    imprimirLinha(pos - 2, false);
-    imprimirLinha(pos - 1, false);
-    cout << "      ---------------------------------------------------------------\n";
-    imprimirLinha(pos,     true);
-    cout << "      ---------------------------------------------------------------\n";
-    imprimirLinha(pos + 1, false);
-    imprimirLinha(pos + 2, false);
-    imprimirLinha(pos + 3, false);
-    cout << "=======================================================================\n\n";
+    cout << "\n";
+    cout << "==== ERRO SINTÁTICO ==========================================\n";
+
+    if(fimDaEntrada()) {
+
+        cout << "\n";
+        cout << "Final de arquivo inesperado.\n";
+        cout << "Pode estar faltando ';', '}' ou ')'.\n\n";
+
+    } else {
+
+        tabelaToken &tk = tabela[pos];
+
+        cout << "\n";
+        cout << "Linha " << tk.linha
+             << ", coluna " << tk.coluna << "\n\n";
+
+        cout << "Contexto:\n";
+        cout << "--------------------------------------------------------------\n";
+
+        imprimirLinha(pos - 2, false);
+        imprimirLinha(pos - 1, false);
+        imprimirLinha(pos,     true);
+        imprimirLinha(pos + 1, false);
+        imprimirLinha(pos + 2, false);
+
+        cout << "--------------------------------------------------------------\n\n";
+
+        cout << "Token inesperado: '" 
+             << tk.nome
+             << "'\n";
+
+        cout << "Classe do token: "
+             << toSString(tk.classe)
+             << "\n\n";
+
+        cout << "Sugestão: verifique a sintaxe próxima dessa posição.\n";
+    }
+
+    cout << "==============================================================\n\n";
 }
 
 void Analisador::proxPos() {

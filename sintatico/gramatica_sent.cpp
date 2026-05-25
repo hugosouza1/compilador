@@ -15,8 +15,8 @@ bool Analisador::S1(NoArvore& pai){
 bool Analisador::sentenca(NoArvore& pai){
     // cerr << "sentenca: pos=" << pos << "\n";
 
-    if(pos >= (int)tabela.size())
-        return false;
+    if(pos >= (int)tabela.size()) return false;
+    
     string nome = tabela[pos].nome;
     classeToken cls = tabela[pos].classe;
 
