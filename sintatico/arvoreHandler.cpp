@@ -37,7 +37,7 @@ void imprimirArvore(const NoArvore& no, const vector<tabelaToken>& tabela, strin
     if(no.id == -1) {
         cout << "[" << tipoToString(no.tipo) << "]" << "\n";
     } else {
-        cout << tabela[no.id].nome /* << " (" << tipoToString(no.tipo) << ")"*/ << "\n";
+        cout << tabela[no.id].nome << "\n";
     }
 
     string novoPrefixo = prefixo + (ultimo ? "    " : "│   ");
