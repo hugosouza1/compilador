@@ -60,6 +60,8 @@ string tipoVarToString(tipoVar tipo) {
 }
 
 void Semantica::imprimirTabela() {
+    sairEscopo();
+
     cout << "\n===== TABELA DE SIMBOLOS =====\n";
 
     cout << left
@@ -67,20 +69,22 @@ void Semantica::imprimirTabela() {
          << setw(10) << "Tipo"
          << setw(10) << "Linha"
          << setw(10) << "Coluna"
+         << setw(10) << "Escopo"
          << '\n';
 
-    cout << string(50, '-') << '\n';
+    cout << string(60, '-') << '\n';
 
-    for(const auto& var : variaveis) {
+    for(const auto& var : tabelafinal) {
         cout << left
              << setw(20) << var.token
              << setw(10) << tipoVarToString(var.tipoToken)
              << setw(10) << var.linhaDec
              << setw(10) << var.colunaDec
+             << setw(10) << var.escopo
              << '\n';
     }
 
-    cout << string(50, '=') << '\n';
+    cout << string(60, '=') << '\n';
 }
 
 tipoVar Semantica::inferirTipoExpressao(const NoArvore& no, Operador op){
@@ -111,6 +115,9 @@ void Semantica::entrarEscopo() {
 
 void Semantica::sairEscopo() {
     while(!variaveis.empty() && variaveis.back().escopo == escopoAtual) {
+        
+        tabelafinal.push_back(variaveis.back());
+
         variaveis.pop_back();
     }
 

@@ -45,6 +45,8 @@ class Semantica {
     private: 
         tipoVar tabelaTipos[M][N][N];
         vector<Simbolo> variaveis;
+        
+        vector<Simbolo> tabelafinal;
 
         int escopoAtual = 0;
 

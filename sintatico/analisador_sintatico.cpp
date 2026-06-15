@@ -26,7 +26,7 @@ int analisadorSintatico(vector<tabelaToken>& tabela){
         imprimirArvore(ParserArvore.raiz, tabela, "", true);
         cout << "Sucesso\n";
 
-        // ParserArvore.imprimirTabelaDec();
+        ParserArvore.imprimirTabelaDec();
 
         return 1;
     } else {
