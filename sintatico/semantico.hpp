@@ -11,6 +11,7 @@ using namespace std;
 
 struct NoArvore;
 
+// propagado na arvore
 enum class tipoVar {
     INT,
     FLOAT,

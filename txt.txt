@@ -4,9 +4,11 @@ string z = "ola";
 bool q = true;
 bool jo = true;
 
-bool resultado = q || jo;
+bool resultado  = q || jo;
+bool resultado2 = q <= jo;
 
-int soma = (((10 + 50) + 40 ) + 80);
+int soma = (((10 + 50
+) + 40 ) + 80);
 
 int mult = 70 * 40;
 
