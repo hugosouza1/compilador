@@ -96,3 +96,17 @@ void Analisador::sincronizarPanico(){
         
     }
 }
+
+
+
+bool Analisador::calcularTipo(NoArvore& no, Operador op){
+    no.tipoToken = regras.inferirTipoExpressao(no, op);
+
+    return no.tipoToken != tipoVar::NONE;
+}
+
+
+void Analisador::propagarTipo(NoArvore& no){
+    if(no.filhos.size() == 1)
+        no.tipoToken = no.filhos[0].tipoToken;
+}

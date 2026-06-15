@@ -17,7 +17,8 @@ string toSString(classeToken c) {
         case classeToken::IDENTIFICADORES: return "IDENTIFICADOR";
         case classeToken::COMENTARIOS: return "COMENTARIO";
         case classeToken::PALAVRA_RESERVADA: return "PALAVRA_RESERVADA";
-        case classeToken::NUMERAIS: return "NUMERAL";
+        case classeToken::NUMERAIS_INT: return "NUMERAL";
+        case classeToken::NUMERAIS_FLOAT: return "NUMERAL";
         case classeToken::OPERADOR_LOGICO_MATEMATICO: return "OPERADOR";
         case classeToken::SEPARADOR: return "SEPARADOR";
         default: return "so pra tirar o warning";
@@ -195,6 +196,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
     bool temDigitoAposPonto = false;
     bool doisPonto = false;
     bool invalido = false;
+    bool temF = false;
 
     while(arquivo.peekChar(batedor)) {
 
@@ -221,6 +223,7 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
             if (!temPonto || temDigitoAposPonto) {
                 arquivo.lerChar(batedor);
                 token += batedor;
+                temF = true;
             }
             break;
         } 
@@ -241,7 +244,11 @@ int numerais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vec
         return 1;
     }
 
-    salvarToken(classeToken::NUMERAIS, token, arquivo, tabela);
+    if(temPonto || temF)
+        salvarToken(classeToken::NUMERAIS_FLOAT, token, arquivo, tabela);
+    else
+        salvarToken(classeToken::NUMERAIS_INT, token, arquivo, tabela);
+
     return 1;
 }
 

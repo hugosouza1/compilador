@@ -21,7 +21,9 @@ SRC = \
 	$(SINTATICO_DIR)/gramatica_dec.cpp \
 	$(SINTATICO_DIR)/gramatica_exp.cpp \
 	$(SINTATICO_DIR)/gramatica_sent.cpp \
-	$(SINTATICO_DIR)/gramatica.cpp 
+	$(SINTATICO_DIR)/gramatica.cpp \
+	$(SINTATICO_DIR)/semantico.cpp 
+
 
 
 # Objetos

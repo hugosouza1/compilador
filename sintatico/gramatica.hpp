@@ -9,6 +9,7 @@
 #include <unordered_set>
 
 #include "arvoreHandler.hpp"
+#include "semantico.hpp"
 #include "../lexico/tokenHandler.hpp"
 
 using namespace std;
@@ -17,6 +18,8 @@ class Analisador {
     private:
         vector<tabelaToken> tabela;
         int pos;
+
+        Semantica regras;
 
     public:
         NoArvore raiz;
@@ -28,6 +31,13 @@ class Analisador {
 
     void imprimirErro();
 
+    void imprimirTabelaDec(){
+        regras.imprimirTabela();
+    }
+    
+    void propagarTipo(NoArvore& no);
+    
+    bool calcularTipo(NoArvore& no, Operador op);
     void proxPos();
     void sincronizarPanico();
     bool tipo(string token);

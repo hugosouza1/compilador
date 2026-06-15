@@ -22,9 +22,14 @@ int analisadorSintatico(vector<tabelaToken>& tabela){
     }
 
     if(sucesso){
-        ParserArvore.raiz.podar();
+        // ParserArvore.raiz.podar();
         imprimirArvore(ParserArvore.raiz, tabela, "", true);
         cout << "Sucesso\n";
+
+        ParserArvore.imprimirTabelaDec();
+        
+
+
         return 1;
     } else {
         cout << "Fracasso — erros encontrados\n";

@@ -8,5 +8,6 @@
 
 #include "../lexico/tokenHandler.hpp"
 #include "gramatica.hpp"
+#include "semantico.hpp"
 
 int analisadorSintatico(vector<tabelaToken>& tabela);

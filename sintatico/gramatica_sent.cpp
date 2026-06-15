@@ -24,7 +24,8 @@ bool Analisador::sentenca(NoArvore& pai){
        nome != "if" && nome != "while" && nome != "for" &&
        nome != "!" && nome != "(" && nome != "true" && nome != "false" &&
        cls != classeToken::IDENTIFICADORES &&
-       cls != classeToken::NUMERAIS &&
+       cls != classeToken::NUMERAIS_INT &&
+       cls != classeToken::NUMERAIS_FLOAT &&
        cls != classeToken::LITERAIS)
         return false;
 
@@ -48,7 +49,8 @@ bool Analisador::sentenca(NoArvore& pai){
     if(tabela[pos].nome == "!" || tabela[pos].nome == "(" ||
        tabela[pos].nome == "true" || tabela[pos].nome == "false" ||
        tabela[pos].classe == classeToken::IDENTIFICADORES ||
-       tabela[pos].classe == classeToken::NUMERAIS ||
+       tabela[pos].classe == classeToken::NUMERAIS_FLOAT ||
+       tabela[pos].classe == classeToken::NUMERAIS_INT ||
        tabela[pos].classe == classeToken::LITERAIS){
         if(!expressao(noAtual)) return false;
         if(tabela[pos].nome != ";") return false;

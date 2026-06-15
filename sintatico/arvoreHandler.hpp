@@ -7,6 +7,7 @@
 using namespace std;
 
 #include "../lexico/tokenHandler.hpp"
+#include "semantico.hpp"
 
 enum class tipoStatement {
     EXPRESSAO,
@@ -24,10 +25,11 @@ enum class tipoStatement {
 struct NoArvore {
     int id;
     tipoStatement tipo;
+    tipoVar tipoToken;
     vector<NoArvore> filhos;
 
-    NoArvore(int id, tipoStatement tipo)
-        : id(id), tipo(tipo) {}
+    NoArvore(int id, tipoStatement tipo, tipoVar tipoToken = tipoVar::NONE)
+        : id(id), tipo(tipo), tipoToken(tipoToken) {}
     
     void podar();
 };
