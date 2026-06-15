@@ -97,8 +97,6 @@ void Analisador::sincronizarPanico(){
     }
 }
 
-
-
 bool Analisador::calcularTipo(NoArvore& no, Operador op){
     no.tipoToken = regras.inferirTipoExpressao(no, op);
 

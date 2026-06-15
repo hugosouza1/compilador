@@ -35,6 +35,7 @@ struct Simbolo {
     string token;
     int linhaDec;
     int colunaDec;
+    int escopo;
 };
 
 constexpr int M = static_cast<int>(Operador::COUNT);
@@ -44,6 +45,8 @@ class Semantica {
     private: 
         tipoVar tabelaTipos[M][N][N];
         vector<Simbolo> variaveis;
+
+        int escopoAtual = 0;
 
 
     public:
@@ -73,6 +76,8 @@ class Semantica {
             tabelaTipos[ATRIB][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::INT;
             tabelaTipos[ATRIB][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::FLOAT;
             tabelaTipos[ATRIB][(int)tipoVar::FLOAT][(int)tipoVar::INT] = tipoVar::FLOAT;     
+            tabelaTipos[ATRIB][(int)tipoVar::STRING][(int)tipoVar::STRING] = tipoVar::STRING;     
+            tabelaTipos[ATRIB][(int)tipoVar::BOOL][(int)tipoVar::BOOL] = tipoVar::BOOL;     
             
             auto IGUAL = (int)Operador::IGUAL_DIFERENTE;
             tabelaTipos[IGUAL][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::BOOL;
@@ -88,6 +93,10 @@ class Semantica {
     tipoVar inferirTipoExpressao(const NoArvore& no, Operador op);
 
     void imprimirTabela();
+    
+    void entrarEscopo();
+    void sairEscopo();
+    
 };
 
 tipoVar stringPraTipoVar(string x);

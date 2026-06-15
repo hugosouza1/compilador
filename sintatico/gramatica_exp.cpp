@@ -17,34 +17,45 @@ bool Analisador::ATR(NoArvore& pai){
 
     return true; 
 }
-
 bool Analisador::ATR1(NoArvore& pai){
 
     if (pos >= (int)tabela.size())
-            return true;
+        return true;
 
     string nome = tabela[pos].nome;
-    
+
     if (nome == ")" || nome == ";" || nome == ",")
         return true;
 
-    if(nome == "=" || nome == "+=" || nome == "-="){
-        // NoArvore &aux = pai;
-        pai.tipo = tipoStatement::ATRIBUICAO;
+    if (nome == "=" || nome == "+=" || nome == "-=") {
 
-        NoArvore opNo(pos, tipoStatement::TOKEN); 
+        NoArvore opNo(pos, tipoStatement::TOKEN);
         pai.filhos.push_back(opNo);
         proxPos();
 
-        if(!ATR(pai)) return false; 
+        if (!ATR(pai)) return false;
+
+        NoArvore& ident = pai.filhos[0];
+        NoArvore& expr = pai.filhos[2]; 
+
+        tipoVar esq = ident.tipoToken;
+        tipoVar dir = expr.tipoToken;
+
+        if (esq == tipoVar::NONE || dir == tipoVar::NONE)
+            return false;
+
+        if (regras.resultado(Operador::ATRIB, esq, dir) == tipoVar::NONE) {
+            cout << "Erro: atribuicao invalida\n";
+            return false;
+        }
+
+        pai.tipoToken = esq;
+        
         return true;
     }
 
-
     return false;
-
 }
-
 
 bool Analisador::EL(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
@@ -240,6 +251,17 @@ bool Analisador::F(NoArvore& pai){
         if(!P(pai))  return false;
         return true;
     }
+        
+    if(tabela[pos].classe == classeToken::LITERAIS){
+        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::STRING);
+        pai.filhos.push_back(opNo);
+        pai.tipoToken = tipoVar::STRING;
+        proxPos();
+            cout << "tipo = " << (int)pai.tipoToken << "\n";
+
+        
+        return true;
+    }
     
     if(tabela[pos].classe == classeToken::IDENTIFICADORES){
         tipoVar tipoAtual = regras.buscarIdentificador(tabela[pos].nome)->tipoToken;
@@ -252,15 +274,6 @@ bool Analisador::F(NoArvore& pai){
         proxPos();
         
         if(!P(pai))  return false;
-        return true;
-    }
-    
-    if(tabela[pos].classe == classeToken::LITERAIS){
-        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::STRING);
-        pai.filhos.push_back(opNo);
-        pai.tipoToken = tipoVar::STRING;
-        proxPos();
-        
         return true;
     }
 

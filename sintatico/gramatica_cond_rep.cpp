@@ -11,11 +11,13 @@ bool Analisador::bloco(NoArvore& pai){
         NoArvore abreNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(abreNo);
         proxPos();
+
         
         sentenca(noAtual); 
         // cerr << "meio\n";
 
         if(fimDaEntrada()) return false;
+
         
         if(tabela[pos].nome != "}") return false;
         NoArvore fechaNo(pos, tipoStatement::TOKEN);
@@ -52,8 +54,13 @@ bool Analisador::condicao(NoArvore& pai){
         noAtual.filhos.push_back(fechaNo);
         proxPos();
 
+        regras.entrarEscopo();
+
         if(!bloco(noAtual)) return false; 
         if(!C1(noAtual))    return false; 
+
+        regras.sairEscopo();
+
         return true;
     }
     return false;
@@ -125,7 +132,12 @@ bool Analisador::repeticao(NoArvore& pai){
         noAtual.filhos.push_back(fechaNo);
         proxPos();
 
+        regras.entrarEscopo();
+
         if(!bloco(noAtual)) return false;
+
+        regras.sairEscopo();
+        
         return true;
     }
 
@@ -143,6 +155,9 @@ bool Analisador::repeticao(NoArvore& pai){
         NoArvore abreNo(pos, tipoStatement::TOKEN);   
         noAtual.filhos.push_back(abreNo);
         proxPos();
+
+
+        regras.entrarEscopo();
 
         // declaração, expressão, ou vazio
         if(tipo(tabela[pos].nome)){
@@ -186,6 +201,9 @@ bool Analisador::repeticao(NoArvore& pai){
 
 
         if(!bloco(noAtual)) return false;
+
+        regras.sairEscopo();
+
         return true;
     }
 

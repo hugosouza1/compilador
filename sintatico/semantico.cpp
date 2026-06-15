@@ -23,7 +23,7 @@ tipoVar stringPraTipoVar(string x){
 
 bool Semantica::declararIdentificador(const tabelaToken& identi, tipoVar var) {
     for(const auto& var : variaveis) {
-        if(var.token == identi.nome) {
+        if(var.token == identi.nome && var.escopo == escopoAtual) {
             return false; // já declarado
         }
     }
@@ -33,17 +33,17 @@ bool Semantica::declararIdentificador(const tabelaToken& identi, tipoVar var) {
     novo.tipoToken = var; 
     novo.linhaDec = identi.linha;
     novo.colunaDec = identi.coluna;
+    novo.escopo = escopoAtual;
 
     variaveis.push_back(novo);
     return true;
 }
 
 
-Simbolo* Semantica::buscarIdentificador(const string& nome) {
-    for(auto& var : variaveis) {
-        if(var.token == nome) {
-            return &var;
-        }
+Simbolo* Semantica::buscarIdentificador(const string& nome){
+    for(int i = variaveis.size()-1; i >= 0; i--){
+        if(variaveis[i].token == nome)
+            return &variaveis[i];
     }
 
     return nullptr;
@@ -102,4 +102,17 @@ tipoVar Semantica::inferirTipoExpressao(const NoArvore& no, Operador op){
     }
 
     return resultado;
+}
+
+
+void Semantica::entrarEscopo() {
+    escopoAtual++;
+}
+
+void Semantica::sairEscopo() {
+    while(!variaveis.empty() && variaveis.back().escopo == escopoAtual) {
+        variaveis.pop_back();
+    }
+
+    escopoAtual--;
 }

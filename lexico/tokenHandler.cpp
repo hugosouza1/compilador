@@ -74,27 +74,28 @@ int erroToken(char pivo, leitorArquivo &arquivo, vector<tabelaERRO> &tabelaInval
 
 int litarais(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela, vector<tabelaERRO> &tabelaInvalidos) {
 
-    if (pivo == '"') {
-        arquivo.setColunaPivo(arquivo.getColuna());
-        arquivo.setLinhaPivo(arquivo.getLinha());
+    if (pivo != '"') return 0;
 
-        string token = "\"";
-        char batedor;
+    arquivo.setColunaPivo(arquivo.getColuna());
+    arquivo.setLinhaPivo(arquivo.getLinha());
 
-        while (arquivo.lerChar(batedor)) {
-            if (batedor == '"') {
-                token += "\"";
-                salvarToken(classeToken::LITERAIS, token, arquivo, tabela);
-                return 1;
-            }
-            token += batedor;
+    string token;
+    token += '"';
+
+    char c;
+
+    while (arquivo.lerChar(c)) {
+        token += c;
+
+        if (c == '"') {
+            salvarToken(classeToken::LITERAIS, token, arquivo, tabela);
+            return 1;
         }
-        erroFormado("LITERAL MAL FORMATADO!", arquivo, token, tabelaInvalidos);
-        return 1; // evitar que o caracter antes do EOF caia em outra classe
     }
-    return 0;
-}
 
+    erroFormado("LITERAL NAO FECHADO", arquivo, token, tabelaInvalidos);
+    return 1;
+}
 
 
 int comentarios(char pivo, leitorArquivo &arquivo /*, vector<tabelaToken> &tabela*/, vector<tabelaERRO> &tabelaInvalidos) {

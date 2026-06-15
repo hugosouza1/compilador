@@ -14,45 +14,67 @@ bool Analisador::D2(NoArvore& pai) {
         pai.filhos.push_back(d2No);
         NoArvore& noAtual = pai.filhos.back();
 
-        
         NoArvore opNo(pos, tipoStatement::TOKEN);
         noAtual.filhos.push_back(opNo);
         proxPos();
 
         if (!D3(noAtual)) return false;
+    
+        NoArvore& expr = noAtual.filhos.back();
+        noAtual.tipoToken = expr.tipoToken;
+        
+        NoArvore& ident = pai.filhos[1];
+        
+        tipoVar esq = ident.tipoToken;
+        tipoVar dir = noAtual.tipoToken;
+        cout << "ESQ=" << (int)esq << " DIR=" << (int)dir << endl;
 
+        if (esq == tipoVar::NONE || dir == tipoVar::NONE)
+            return false;
+
+        if (regras.resultado(Operador::ATRIB, esq, dir) == tipoVar::NONE) {
+            cout << "Erro: atribuicao invalida\n";
+            return false;
+        }
+
+        pai.tipoToken = esq;
         return true;
     }
-
+    
     return false; 
 }
 
 bool Analisador::D3(NoArvore& pai) {
-
     if (pos >= (int)tabela.size()) return false;
-        
+
     classeToken cls = tabela[pos].classe;
     string nome = tabela[pos].nome;
-        
+
     if (nome == ")") return true;
 
     if (cls == classeToken::IDENTIFICADORES ||
-        cls == classeToken::NUMERAIS_INT        ||
-        cls == classeToken::NUMERAIS_FLOAT        ||
+        cls == classeToken::NUMERAIS_INT    ||
+        cls == classeToken::NUMERAIS_FLOAT  ||
         cls == classeToken::LITERAIS        ||
         nome == "!" || nome == "(" || nome == "false" || nome == "true") {
-        
-        // cout << "pos: " << pos << "  token: " << tabela[pos].nome << "\n";
+
         NoArvore d3No(-1, tipoStatement::EXPRESSAO);
         pai.filhos.push_back(d3No);
         NoArvore& noAtual = pai.filhos.back();
 
-        if(!expressao(noAtual)) return false;
+        if (!expressao(noAtual)) return false;
+
+        // expressao() adiciona um filho em noAtual; o tipo está nesse filho
+        if (!noAtual.filhos.empty())
+            noAtual.tipoToken = noAtual.filhos.back().tipoToken; // ← FIX
+
+        pai.tipoToken = noAtual.tipoToken;
         return true;
     }
 
     return false;
 }
+
 
 bool Analisador::D1(NoArvore& pai) {
 
