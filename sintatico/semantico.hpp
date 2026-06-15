@@ -15,7 +15,7 @@ enum class tipoVar {
     INT,
     FLOAT,
     STRING,
-    BOOL,
+    BOOLEAN,
     NONE,
     COUNT
 };
@@ -64,26 +64,33 @@ class Semantica {
             tabelaTipos[SOMA_SUB][(int)tipoVar::STRING][(int)tipoVar::STRING] = tipoVar::STRING;
 
             auto MAIOR = (int)Operador::MAIOR_MENOR_IGUAL;
-            tabelaTipos[MAIOR][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::BOOL;
-            tabelaTipos[MAIOR][(int)tipoVar::INT][(int)tipoVar::FLOAT] = tipoVar::BOOL;
-            tabelaTipos[MAIOR][(int)tipoVar::FLOAT][(int)tipoVar::INT] = tipoVar::BOOL;
-            tabelaTipos[MAIOR][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::BOOL;
+            tabelaTipos[MAIOR][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::BOOLEAN;
+            tabelaTipos[MAIOR][(int)tipoVar::INT][(int)tipoVar::FLOAT] = tipoVar::BOOLEAN;
+            tabelaTipos[MAIOR][(int)tipoVar::FLOAT][(int)tipoVar::INT] = tipoVar::BOOLEAN;
+            tabelaTipos[MAIOR][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::BOOLEAN;
 
             auto AND = (int)Operador::AND_OR;
-            tabelaTipos[AND][(int)tipoVar::BOOL][(int)tipoVar::BOOL] = tipoVar::BOOL;
+            tabelaTipos[AND][(int)tipoVar::BOOLEAN][(int)tipoVar::BOOLEAN] = tipoVar::BOOLEAN;
 
             auto ATRIB = (int)Operador::ATRIB;
             tabelaTipos[ATRIB][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::INT;
             tabelaTipos[ATRIB][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::FLOAT;
             tabelaTipos[ATRIB][(int)tipoVar::FLOAT][(int)tipoVar::INT] = tipoVar::FLOAT;     
             tabelaTipos[ATRIB][(int)tipoVar::STRING][(int)tipoVar::STRING] = tipoVar::STRING;     
-            tabelaTipos[ATRIB][(int)tipoVar::BOOL][(int)tipoVar::BOOL] = tipoVar::BOOL;     
+            
+            tabelaTipos[ATRIB][(int)tipoVar::BOOLEAN][(int)tipoVar::BOOLEAN] = tipoVar::BOOLEAN;     
             
             auto IGUAL = (int)Operador::IGUAL_DIFERENTE;
-            tabelaTipos[IGUAL][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::BOOL;
-            tabelaTipos[IGUAL][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::BOOL;
-            tabelaTipos[IGUAL][(int)tipoVar::BOOL][(int)tipoVar::BOOL] = tipoVar::BOOL;
-            tabelaTipos[IGUAL][(int)tipoVar::STRING][(int)tipoVar::STRING] = tipoVar::BOOL;
+            tabelaTipos[IGUAL][(int)tipoVar::INT][(int)tipoVar::INT] = tipoVar::BOOLEAN;
+            tabelaTipos[IGUAL][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::BOOLEAN;
+            tabelaTipos[IGUAL][(int)tipoVar::BOOLEAN][(int)tipoVar::BOOLEAN] = tipoVar::BOOLEAN;
+            tabelaTipos[IGUAL][(int)tipoVar::STRING][(int)tipoVar::STRING] = tipoVar::BOOLEAN;
+
+            auto MULT_DIV = (int)Operador::MULT_DIV;
+            tabelaTipos[MULT_DIV][(int)tipoVar::INT][(int)tipoVar::INT]     = tipoVar::INT;
+            tabelaTipos[MULT_DIV][(int)tipoVar::INT][(int)tipoVar::FLOAT]   = tipoVar::FLOAT;
+            tabelaTipos[MULT_DIV][(int)tipoVar::FLOAT][(int)tipoVar::INT]   = tipoVar::FLOAT;
+            tabelaTipos[MULT_DIV][(int)tipoVar::FLOAT][(int)tipoVar::FLOAT] = tipoVar::FLOAT;
         }
 
     tipoVar resultado(Operador op, tipoVar esq, tipoVar dir);

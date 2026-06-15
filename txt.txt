@@ -1,3 +1,30 @@
 int x = 0;
-float z = 0;
-string w = "ola";
+float y = 10f;
+string z = "ola";
+bool q = true;
+bool jo = true;
+
+bool resultado = q || jo;
+
+int soma = (((10 + 50) + 40 ) + 80);
+
+int mult = 70 * 40;
+
+int novo = soma + mult;
+
+int bloco;
+
+if(true){
+    int bloco;
+    
+    if( false ){
+        int bloco;
+    }
+}
+
+for(int i = 0; i < 10; i++){
+    string atoa;
+}
+
+int i = 0;
+

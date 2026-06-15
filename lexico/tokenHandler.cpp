@@ -21,6 +21,7 @@ string toSString(classeToken c) {
         case classeToken::NUMERAIS_FLOAT: return "NUMERAL";
         case classeToken::OPERADOR_LOGICO_MATEMATICO: return "OPERADOR";
         case classeToken::SEPARADOR: return "SEPARADOR";
+        case classeToken::BOOLEAN: return "BOOLEAN";
         default: return "so pra tirar o warning";
     }
 }
@@ -328,7 +329,10 @@ int identificador(char pivo, leitorArquivo &arquivo, vector<tabelaToken> &tabela
         erroFormado("IDENTIFICADOR MAL FORMATADO!", arquivo, token, tabelaInvalidos);
     }
     else if (ehPalavraReservada(token)) {
-        salvarToken(classeToken::PALAVRA_RESERVADA, token, arquivo, tabela);
+        if(token == "true" || token == "false")
+            salvarToken(classeToken::BOOLEAN, token, arquivo, tabela);
+        else
+            salvarToken(classeToken::PALAVRA_RESERVADA, token, arquivo, tabela);
     }
     else {
         salvarToken(classeToken::IDENTIFICADORES, token, arquivo, tabela);

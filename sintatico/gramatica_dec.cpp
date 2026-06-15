@@ -27,13 +27,14 @@ bool Analisador::D2(NoArvore& pai) {
         
         tipoVar esq = ident.tipoToken;
         tipoVar dir = noAtual.tipoToken;
-        cout << "ESQ=" << (int)esq << " DIR=" << (int)dir << endl;
+
+        // cout << "ESQ=" << (int)esq << " DIR=" << (int)dir << endl;
 
         if (esq == tipoVar::NONE || dir == tipoVar::NONE)
             return false;
 
         if (regras.resultado(Operador::ATRIB, esq, dir) == tipoVar::NONE) {
-            cout << "Erro: atribuicao invalida\n";
+            // cout << "Erro: atribuicao invalida\n";
             return false;
         }
 
@@ -56,7 +57,8 @@ bool Analisador::D3(NoArvore& pai) {
         cls == classeToken::NUMERAIS_INT    ||
         cls == classeToken::NUMERAIS_FLOAT  ||
         cls == classeToken::LITERAIS        ||
-        nome == "!" || nome == "(" || nome == "false" || nome == "true") {
+        cls == classeToken::BOOLEAN         ||
+        nome == "!" || nome == "(") {
 
         NoArvore d3No(-1, tipoStatement::EXPRESSAO);
         pai.filhos.push_back(d3No);
@@ -64,9 +66,8 @@ bool Analisador::D3(NoArvore& pai) {
 
         if (!expressao(noAtual)) return false;
 
-        // expressao() adiciona um filho em noAtual; o tipo está nesse filho
         if (!noAtual.filhos.empty())
-            noAtual.tipoToken = noAtual.filhos.back().tipoToken; // ← FIX
+            noAtual.tipoToken = noAtual.filhos.back().tipoToken;
 
         pai.tipoToken = noAtual.tipoToken;
         return true;

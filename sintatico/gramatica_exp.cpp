@@ -9,6 +9,9 @@ bool Analisador::ATR(NoArvore& pai){
     NoArvore atrNo(-1, tipoStatement::EXPRESSAO); 
     pai.filhos.push_back(atrNo);
     NoArvore& noAtual = pai.filhos.back();
+
+    
+    // cout << tabela[pos].nome << "\n";
     
     if(!EL(noAtual))   return false;      
     if(!ATR1(noAtual)) return false;
@@ -17,6 +20,7 @@ bool Analisador::ATR(NoArvore& pai){
 
     return true; 
 }
+
 bool Analisador::ATR1(NoArvore& pai){
 
     if (pos >= (int)tabela.size())
@@ -45,7 +49,7 @@ bool Analisador::ATR1(NoArvore& pai){
             return false;
 
         if (regras.resultado(Operador::ATRIB, esq, dir) == tipoVar::NONE) {
-            cout << "Erro: atribuicao invalida\n";
+            // cout << "Erro: atribuicao invalida\n";
             return false;
         }
 
@@ -79,7 +83,7 @@ bool Analisador::EL1(NoArvore& pai){
     string nome = tabela[pos].nome;
 
     if (nome == ")" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == ",")
-    return true;
+        return true;
 
     if(nome == "||"){
         NoArvore opNo(pos, tipoStatement::TOKEN);
@@ -154,7 +158,7 @@ bool Analisador::ER1(NoArvore& pai){
 
     string nome = tabela[pos].nome;
     if (nome == "||" || nome == ")" || nome == "&&" || nome == ";" || nome == "=" || nome == "-=" || nome == "+=" || nome == ",")
-    return true;
+        return true;
 
     if(nome == ">=" || nome == "<=" || nome == ">" || nome == "<" || nome == "==" || nome == "!="){
         NoArvore opNo(pos, tipoStatement::TOKEN);
@@ -179,17 +183,17 @@ bool Analisador::F(NoArvore& pai){
         pai.filhos.push_back(fNo);
         NoArvore& noAtual = pai.filhos.back();
 
-        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::BOOL);
+        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::BOOLEAN);
         noAtual.filhos.push_back(opNo);
         proxPos();
         
         if(!F(noAtual)) return false;
 
-        if(noAtual.filhos.back().tipoToken != tipoVar::BOOL)
+        if(noAtual.filhos.back().tipoToken != tipoVar::BOOLEAN)
             return false;
 
-        noAtual.tipoToken = tipoVar::BOOL;
-        pai.tipoToken = tipoVar::BOOL;
+        noAtual.tipoToken = tipoVar::BOOLEAN;
+        pai.tipoToken = tipoVar::BOOLEAN;
         return true;
     }
 
@@ -216,12 +220,16 @@ bool Analisador::F(NoArvore& pai){
         proxPos();
         return true;
     }
-
-    if(tabela[pos].nome == "true" || tabela[pos].nome == "false"){
-        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::BOOL);
+    
+    
+    if(tabela[pos].classe == classeToken::BOOLEAN){
+        NoArvore opNo(pos, tipoStatement::TOKEN, tipoVar::BOOLEAN);
         pai.filhos.push_back(opNo);
 
-        pai.tipoToken = tipoVar::BOOL;
+        pai.tipoToken = tipoVar::BOOLEAN;
+
+        // cout << "tipo = \n\n\n\n\n" << (int)pai.tipoToken << "\n";
+        
         proxPos();
         
         return true;
@@ -257,7 +265,6 @@ bool Analisador::F(NoArvore& pai){
         pai.filhos.push_back(opNo);
         pai.tipoToken = tipoVar::STRING;
         proxPos();
-            cout << "tipo = " << (int)pai.tipoToken << "\n";
 
         
         return true;

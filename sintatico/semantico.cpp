@@ -16,7 +16,7 @@ tipoVar stringPraTipoVar(string x){
         return tipoVar::STRING;
 
     if(x == "bool")
-        return tipoVar::BOOL;
+        return tipoVar::BOOLEAN;
 
     return tipoVar::NONE;
 }
@@ -54,7 +54,7 @@ string tipoVarToString(tipoVar tipo) {
         case tipoVar::INT:    return "INT";
         case tipoVar::FLOAT:  return "FLOAT";
         case tipoVar::STRING: return "STRING";
-        case tipoVar::BOOL:   return "BOOL";
+        case tipoVar::BOOLEAN:   return "BOOLEAN";
         default:              return "NONE";
     }
 }
